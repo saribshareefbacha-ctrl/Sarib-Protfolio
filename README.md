@@ -1,16 +1,120 @@
-# React + Vite
+# M. Sarib Randhawa — Ultra-Realistic 3D Portfolio + Business System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single, self‑contained `index.html` (HTML5 + CSS3 + vanilla ES6 JavaScript) that combines a
+premium 3D creative portfolio with a full **User Panel** and **Owner Admin Panel**, plus
+authentication and real‑time data sync.
 
-Currently, two official plugins are available:
+## ✨ What's included
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Public site** — 3D hero (rotating cube avatar, particle canvas, mouse parallax, typing
+  animation, animated counters), glassmorphism sticky nav, 3D flip‑card work grid, interactive
+  **skills orbital sphere**, about + contact sections, dark/light toggle, and a full **language picker** (Basic + All / medium-mostly-used languages, searchable, persisted in `localStorage` and applied to `<html lang>`).
+- **Auth** — Email/Password, Google login (Firebase) and Owner login. Sign up, log in,
+  forgot‑password, session persistence, blocked‑user check.
+- **User Panel** — Overview, editable Profile (avatar/info/change password), My Orders table with
+  live status, Place‑Order modal (category grid + auto ID + drag‑drop files), Hire‑Me form,
+  Settings (delete account / logout).
+- **Owner Panel** — Dashboard stats, Site Settings (live edits to site text, **owner profile image**, **site logo / favicon**, **social profile links**, and the
+  **three main section headings** — eyebrow / title / gradient-accent word / subtitle for **Work ("Crafted with Precision")**, **Skills ("Skills in Orbit")** and **Services ("What I Offer")**),
+  **Fast Service** (owner sets a dedicated WhatsApp number + extra USD fee; after a user places an order they're asked "Do you want your order done fast?" and, if yes, the full order is sent straight to that admin WhatsApp), Order
+  Management (search/filter/status/update/delete/notify — fast orders show a ⚡ marker + fee), User Management
+  (block/unblock/delete/email/export CSV), **Products & Pricing** (owner-managed services with
+  USD prices, optional image/video sample upload OR auto "use custom template" visual per
+  service), **Portfolio** (owner-managed Work projects — title, category, image/gradient, demo & case URLs, stack; renders the 3D flip-card grid), **Skills** (owner-managed skills — name, category, Font Awesome icon, level %; feeds the orbital sphere and bars), Owner Credentials.
 
-## React Compiler
+> **Editable branding:** the **owner profile image** (shown in the Owner Panel) and the **site logo / browser-tab favicon** are both uploaded/edited in *Site Settings* and update live across the navbar, panel and browser tab.
+- **Public Services section** — every owner-defined product is shown on the landing page with its
+  price, converted live across multiple currencies (default **USD**), and a "Order Now" button.
+- **Real‑time sync** — Owner changes (profile, categories, order status, blocking) instantly
+  reflect on the public site and user panel.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Running it
 
-## Expanding the ESLint configuration
+**Demo mode (no setup, works immediately):** just open `index.html` in a browser. All data is
+stored in `localStorage` and synced in real‑time within the same browser.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Owner login (shared screen):** the owner logs in through the *same* "Email or Username"
+login field as regular users — there is no separate owner button. Use the credentials stored in
+`settings/owner` (default **`sarib` / `sarib123`**). Signing in with the Google account
+**`saribshareefbacha@gmail.com`** also routes straight to the Owner Panel.
+
+**Firebase mode (production):** open `index.html`, scroll to the `CONFIG` block near the top of
+the `<script>`, paste your Firebase web config into `FIREBASE_CONFIG`, and set `USE_FIREBASE = true`.
+Also create a **Firestore** database with these collections/documents:
+
+```
+settings/owner        → { name, cast, exp, desc, phone, email, location, adminUser, adminPass, avatar, logo, fastWa, fastFee, socials[], sections{}, createdAt, updatedAt }
+                        (avatar = owner profile image; logo = site logo / favicon; fastWa = WhatsApp number for priority orders; fastFee = extra USD charge for fast service)
+users/{userId}        → { name, username, email, phone, status, avatar, createdAt, updatedAt }
+orders/{orderId}      → { orderId, customer, username, email, phone, category, description, attachments[], status, date, userId, createdAt, updatedAt }
+categories/{catId}    → { name, price, desc, kw, useTemplate, media, mediaType, createdAt }
+                        (price is stored in USD; media is a data-URL when uploaded via the panel)
+projects/{projId}      → { t, cat, img, demo, case, stack[], createdAt }   (the "Crafted with Precision" portfolio grid)
+skills/{skillId}       → { n, c, i, lv, createdAt }                        (n=name, c=category, i=Font Awesome icon class, lv=level 0-100)
+```
+
+> **Important — security model.** In this build the **Owner is NOT a Firebase Auth user**
+> (per the spec, owner login compares a password stored in `settings/owner`). That means Owner
+> Panel writes hit Firestore *without* `request.auth`. The rules below make the app fully
+> functional, but they are **open** — anyone with the Firestore API could write these
+> collections. For production, harden this with a Cloud Function / admin SDK that writes on
+> behalf of the owner, or make the owner a Firebase Auth user with a custom `admin` claim and
+> gate writes on `request.auth.token.admin`.
+
+**Working rules (functional, but open — fine for a prototype):**
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /settings/{doc}     { allow read: if true; allow write: if true; }
+    match /categories/{id}    { allow read: if true; allow write: if true; }
+    match /users/{uid}        { allow read: if true; allow write: if true; }
+    match /orders/{id}        { allow read: if true; allow write: if true; }
+  }
+}
+```
+
+**Hardened rules (recommended for production — requires an admin claim):**
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /settings/{doc}  { allow read: if true; allow write: if request.auth.token.admin == true; }
+    match /categories/{id} { allow read: if true; allow write: if request.auth.token.admin == true; }
+    match /users/{uid}     { allow read: if true; allow write: if request.auth.token.admin == true
+                                              || request.auth.uid == uid; }
+    match /orders/{id}     { allow read: if true; allow write: if request.auth.token.admin == true
+                                              || request.auth != null; }
+  }
+}
+```
+
+With the hardened rules you'd also make the owner a real Firebase Auth account and grant it the
+`admin` custom claim via the Admin SDK (or a callable Cloud Function), and have the Owner Panel
+sign in with Firebase Auth instead of the client-side password compare.
+
+> The app loads the Firebase compat SDK from the CDN. When `USE_FIREBASE` is `false` it ignores
+> Firebase entirely and runs fully offline in demo mode.
+
+## 🎨 Customizing the public site
+
+Edit the `DEFAULT_SETTINGS`, `DEFAULT_PRODUCTS` (owner services + USD prices), `CURRENCIES`
+(exchange rates/symbols), `SKILLS`, and `PROJECTS` constants at the top of the script, or — once
+logged in as Owner — use **Site Settings** for live text edits and **Products & Pricing** to add
+/ edit services (name, USD price, description, image/video sample upload, or "use custom
+template"), **Site Settings** to upload the **owner profile image** and **site logo / favicon** (shown in the navbar + browser tab) and manage **social profile links** (rendered at the bottom of the landing page), and **Owner Credentials** to change the owner username/password. The WhatsApp/email
+buttons are generated automatically from the owner phone/email.
+
+The app is resilient: if Firestore reads are blocked by security rules it falls back to the
+default data in memory and shows a red toast prompting you to fix the rules (see above), so the
+public site still renders.
+
+## 🛠 Tech notes
+
+- Pure HTML/CSS/JS — no build step required.
+- Glassmorphism + neumorphism components, CSS 3D transforms, `IntersectionObserver` reveals,
+  canvas particle system, debounced scroll/mouse handlers.
+- Responsive from 480px → 1280px+.
+- Integrations: WhatsApp (`wa.me`) + email (`mailto:`), Google Fonts (Inter), Font Awesome.
