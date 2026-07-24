@@ -496,23 +496,23 @@ tbody tr:hover{background:var(--glass-1)}
   <div class="nav-inner wrap" style="padding-left:18px;padding-right:18px">
     <a href="#home" class="brand"><span class="logo-3d" id="brandLogo">S</span> Sarib<span class="grad-text">.</span></a>
     <div class="nav-links" id="navLinks">
-      <a href="#work">Work</a>
-      <a href="#skills">Skills</a>
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+      <a href="#work" data-i18n="nav.work">Work</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#services" data-i18n="nav.services">Services</a>
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
     </div>
     <div class="nav-actions">
       <button class="icon-btn" id="langBtn" title="Language"><i class="fa-solid fa-globe"></i></button>
       <button class="icon-btn" id="themeBtn" title="Toggle theme"><i class="fa-solid fa-moon"></i></button>
       <!-- logged-out actions -->
-      <button class="btn ghost" id="getStartedBtn" style="padding:10px 20px">Get Started</button>
+      <button class="btn ghost" id="getStartedBtn" style="padding:10px 20px" data-i18n="nav.getStarted">Get Started</button>
       <!-- logged-in chip (hidden until login) -->
       <div class="user-chip hidden" id="userChip">
         <img id="chipAvatar" alt="" />
         <span id="chipName">User</span>
       </div>
-      <button class="btn" id="dashboardBtn"><i class="fa-solid fa-gauge"></i> Dashboard</button>
+      <button class="btn" id="dashboardBtn"><i class="fa-solid fa-gauge"></i> <span data-i18n="nav.dashboard" data-i18n-text>Dashboard</span></button>
       <div class="dots-menu">
         <button class="icon-btn" id="dotsBtn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
         <div class="dropdown glass" id="dotsDropdown">
@@ -535,18 +535,18 @@ tbody tr:hover{background:var(--glass-1)}
   <div class="wrap">
     <div class="hero-grid">
       <div class="hero-text" data-parallax="0.02">
-        <span class="status-badge"><span class="dot"></span> Available for Work</span>
+        <span class="status-badge"><span class="dot"></span> <span data-i18n="hero.available" data-i18n-text>Available for Work</span></span>
         <h1>Hi, I'm <span class="name" id="heroName">M. Sarib Randhawa</span></h1>
         <div class="type-wrap"><span class="typed" id="typed"></span><span class="caret"></span></div>
         <p class="lead" id="heroDesc">Logo & Brand Identity · 3D Modeling · Cinematic Video · Full-Stack Development. I craft immersive digital experiences where design meets engineering.</p>
         <div class="hero-cta">
-          <a href="#work" class="btn pulse">Explore Work <i class="fa-solid fa-arrow-right"></i></a>
-          <button class="btn ghost tilt" id="hireHeroBtn">Hire Me <i class="fa-solid fa-handshake"></i></button>
+          <a href="#work" class="btn pulse"><span data-i18n="hero.explore" data-i18n-text>Explore Work</span> <i class="fa-solid fa-arrow-right"></i></a>
+          <button class="btn ghost tilt" id="hireHeroBtn"><span data-i18n="hero.hire" data-i18n-text>Hire Me</span> <i class="fa-solid fa-handshake"></i></button>
         </div>
         <div class="hero-stats">
-          <div class="stat glass-sm"><div class="num" data-count="8" data-suffix="+">0</div><div class="lbl">Years Experience</div></div>
-          <div class="stat glass-sm"><div class="num" data-count="240" data-suffix="+">0</div><div class="lbl">Projects Done</div></div>
-          <div class="stat glass-sm"><div class="num" data-count="180" data-suffix="+">0</div><div class="lbl">Happy Clients</div></div>
+          <div class="stat glass-sm"><div class="num" data-count="8" data-suffix="+">0</div><div class="lbl" data-i18n="hero.years">Years Experience</div></div>
+          <div class="stat glass-sm"><div class="num" data-count="240" data-suffix="+">0</div><div class="lbl" data-i18n="hero.projects">Projects Done</div></div>
+          <div class="stat glass-sm"><div class="num" data-count="180" data-suffix="+">0</div><div class="lbl" data-i18n="hero.clients">Happy Clients</div></div>
         </div>
       </div>
       <div class="hero-3d" data-parallax="-0.03">
@@ -659,19 +659,19 @@ tbody tr:hover{background:var(--glass-1)}
       <div class="contact-card glass">
         <h3 class="section-title" style="font-size:1.6rem">Let's <span class="grad-text">Connect</span></h3>
         <p class="section-sub" style="margin:10px 0 20px">Have a project in mind? Reach out directly — I usually respond within a few hours.</p>
-        <div class="row"><div class="ic"><i class="fa-brands fa-whatsapp"></i></div><div><div style="font-size:.75rem;color:var(--muted)">WhatsApp</div><div id="contactPhone">+92 300 7847827</div></div></div>
-        <div class="row"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><div style="font-size:.75rem;color:var(--muted)">Email</div><div id="contactEmail">saribshareefbacha@gmail.com</div></div></div>
+        <div class="row"><div class="ic"><i class="fa-brands fa-whatsapp"></i></div><div><div style="font-size:.75rem;color:var(--muted)" data-i18n="contact.whatsapp">WhatsApp</div><div id="contactPhone">+92 300 7847827</div></div></div>
+        <div class="row"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><div style="font-size:.75rem;color:var(--muted)" data-i18n="contact.email">Email</div><div id="contactEmail">saribshareefbacha@gmail.com</div></div></div>
         <div class="row"><div class="ic"><i class="fa-solid fa-location-dot"></i></div><div><div style="font-size:.75rem;color:var(--muted)">Location</div><div id="contactLoc">Pakistan · Remote & Contract</div></div></div>
         <div class="qbtn">
-          <a class="btn" id="contactWa" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-          <a class="btn ghost" id="contactMail" href="#"><i class="fa-solid fa-envelope"></i> Email</a>
-          <button class="btn ghost" id="contactHire"><i class="fa-solid fa-handshake"></i> Hire Me</button>
+          <a class="btn" id="contactWa" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="contact.whatsapp" data-i18n-text>WhatsApp</span></a>
+          <a class="btn ghost" id="contactMail" href="#"><i class="fa-solid fa-envelope"></i> <span data-i18n="contact.email" data-i18n-text>Email</span></a>
+          <button class="btn ghost" id="contactHire"><i class="fa-solid fa-handshake"></i> <span data-i18n="contact.hire" data-i18n-text>Hire Me</span></button>
         </div>
       </div>
       <div class="glass" style="padding:38px;display:flex;flex-direction:column;justify-content:center;gap:18px">
-        <div class="status-badge" style="align-self:flex-start"><span class="dot"></span> Currently Accepting New Projects</div>
+        <div class="status-badge" style="align-self:flex-start"><span class="dot"></span> <span data-i18n="contact.accepting" data-i18n-text>Currently Accepting New Projects</span></div>
         <p class="section-sub">Whether it's a brand from scratch, a 3D product reveal, or a full-stack app — tell me what you're building and let's make it real.</p>
-        <button class="btn pulse" id="contactCta" style="align-self:flex-start">Start a Project <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn pulse" id="contactCta" style="align-self:flex-start"><span data-i18n="contact.start" data-i18n-text>Start a Project</span> <i class="fa-solid fa-arrow-right"></i></button>
         <div class="glass-sm" style="padding:18px;font-size:.85rem;color:var(--muted)"><i class="fa-solid fa-clock"></i> Typical response time: <b style="color:var(--txt)">under 4 hours</b> during business days.</div>
       </div>
     </div>
@@ -690,7 +690,7 @@ tbody tr:hover{background:var(--glass-1)}
 
 <footer>
   <div class="wrap">
-    <p>© <span id="year"></span> M. Sarib Randhawa — Crafted with 3D, glass & code.</p>
+    <p>© <span id="year"></span> M. Sarib Randhawa — <span data-i18n="footer" data-i18n-text>Crafted with 3D, glass & code.</span></p>
   </div>
 </footer>
 
@@ -699,18 +699,18 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="loginOverlay">
   <div class="modal glass">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2>Welcome Back</h2>
+    <h2 data-i18n="auth.welcome">Welcome Back</h2>
     <p class="sub">Log in to access your dashboard.</p>
     <div class="form-msg" id="loginMsg"></div>
     <form id="loginForm" novalidate autocomplete="off">
-      <div class="field"><label>Email or Username</label><input type="text" name="email" required><span class="err">Required.</span></div>
-      <div class="field"><label>Password</label><div class="pwd-wrap"><input type="password" name="password" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err">Password is required.</span></div>
-      <button type="submit" class="btn" style="width:100%">Log In <i class="fa-solid fa-arrow-right"></i></button>
+      <div class="field"><label data-i18n="auth.emailUser">Email or Username</label><input type="text" name="email" required><span class="err">Required.</span></div>
+      <div class="field"><label data-i18n="auth.password">Password</label><div class="pwd-wrap"><input type="password" name="password" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err">Password is required.</span></div>
+      <button type="submit" class="btn" style="width:100%"><span data-i18n="auth.login" data-i18n-text>Log In</span> <i class="fa-solid fa-arrow-right"></i></button>
     </form>
     <div class="divider-or">or continue with</div>
-    <button class="google-btn" id="googleLogin"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/providers/google.svg" alt=""> Sign in with Google</button>
-    <p class="switch-link">New here? <a href="#" id="toSignup">Create an account</a></p>
-    <p class="switch-link"><a href="#" id="toForgot">Forgot password?</a></p>
+    <button class="google-btn" id="googleLogin"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/providers/google.svg" alt=""> <span data-i18n="auth.google" data-i18n-text>Sign in with Google</span></button>
+    <p class="switch-link">New here? <a href="#" id="toSignup" data-i18n="auth.create">Create an account</a></p>
+    <p class="switch-link"><a href="#" id="toForgot" data-i18n="auth.forgot">Forgot password?</a></p>
   </div>
 </div>
 
@@ -718,20 +718,20 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="signupOverlay">
   <div class="modal glass">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2>Create Account</h2>
+    <h2 data-i18n="auth.create">Create Account</h2>
     <p class="sub">Join to manage orders and projects.</p>
     <div class="form-msg" id="signupMsg"></div>
     <form id="signupForm" novalidate autocomplete="off">
-      <div class="field"><label>Full Name</label><input name="name" required><span class="err">Name is required.</span></div>
-      <div class="field"><label>Username</label><input name="username" required><span class="err">Username is required (letters/numbers).</span></div>
+      <div class="field"><label data-i18n="auth.fullName">Full Name</label><input name="name" required><span class="err">Name is required.</span></div>
+      <div class="field"><label data-i18n="auth.username">Username</label><input name="username" required><span class="err">Username is required (letters/numbers).</span></div>
       <div class="field"><label>Email</label><input type="email" name="email" required><span class="err">Enter a valid email.</span></div>
-      <div class="field"><label>Phone</label><input name="phone" required><span class="err">Phone is required.</span></div>
-      <div class="field"><label>Password</label><div class="pwd-wrap"><input type="password" name="password" autocomplete="new-password" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err">Min 6 characters.</span></div>
-      <button type="submit" class="btn" style="width:100%">Sign Up <i class="fa-solid fa-user-plus"></i></button>
+      <div class="field"><label data-i18n="auth.phone">Phone</label><input name="phone" required><span class="err">Phone is required.</span></div>
+      <div class="field"><label data-i18n="auth.password">Password</label><div class="pwd-wrap"><input type="password" name="password" autocomplete="new-password" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err">Min 6 characters.</span></div>
+      <button type="submit" class="btn" style="width:100%"><span data-i18n="auth.signup" data-i18n-text>Sign Up</span> <i class="fa-solid fa-user-plus"></i></button>
     </form>
     <div class="divider-or">or</div>
-    <button class="google-btn" id="googleSignup"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/providers/google.svg" alt=""> Sign up with Google</button>
-    <p class="switch-link">Already have an account? <a href="#" id="toLogin">Log in</a></p>
+    <button class="google-btn" id="googleSignup"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/providers/google.svg" alt=""> <span data-i18n="auth.google" data-i18n-text>Sign up with Google</span></button>
+    <p class="switch-link">Already have an account? <a href="#" id="toLogin" data-i18n="auth.login">Log in</a></p>
   </div>
 </div>
 
@@ -739,14 +739,14 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="forgotOverlay">
   <div class="modal glass">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2>Reset Password</h2>
+    <h2 data-i18n="auth.reset">Reset Password</h2>
     <p class="sub">We'll email you a reset link.</p>
     <div class="form-msg" id="forgotMsg"></div>
     <form id="forgotForm" novalidate>
       <div class="field"><label>Email</label><input type="email" name="email" placeholder="you@email.com" required><span class="err">Enter a valid email.</span></div>
-      <button type="submit" class="btn" style="width:100%">Send Reset Link</button>
+      <button type="submit" class="btn" style="width:100%"><span data-i18n="auth.sendReset" data-i18n-text>Send Reset Link</span></button>
     </form>
-    <p class="switch-link"><a href="#" id="forgotToLogin">Back to login</a></p>
+    <p class="switch-link"><a href="#" id="forgotToLogin" data-i18n="auth.backLogin">Back to login</a></p>
   </div>
 </div>
 
@@ -754,18 +754,18 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="hireOverlay">
   <div class="modal glass wide">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2>Hire Me</h2>
+    <h2 data-i18n="hire.title">Hire Me</h2>
     <p class="sub">Tell me about your project and I'll get back to you.</p>
     <div class="form-msg" id="hireMsg"></div>
     <form id="hireForm" novalidate>
-      <div class="field"><label>Name</label><input name="name" required><span class="err">Required.</span></div>
-      <div class="field"><label>Email</label><input type="email" name="email" required><span class="err">Valid email required.</span></div>
-      <div class="field"><label>Phone</label><input name="phone"></div>
+      <div class="field"><label data-i18n="hire.name">Name</label><input name="name" required><span class="err">Required.</span></div>
+      <div class="field"><label data-i18n="hire.email">Email</label><input type="email" name="email" required><span class="err">Valid email required.</span></div>
+      <div class="field"><label data-i18n="hire.phone">Phone</label><input name="phone"></div>
       <div class="field"><label>Reference Code (optional)</label><input name="ref"></div>
-      <div class="field"><label>Message</label><textarea name="message" placeholder="Briefly describe your project..." required></textarea><span class="err">A short message helps.</span></div>
+      <div class="field"><label data-i18n="hire.message">Message</label><textarea name="message" placeholder="Briefly describe your project..." required></textarea><span class="err">A short message helps.</span></div>
       <div class="field"><label>Resume / CV (optional)</label><input type="file" name="cv" class="file-input"></div>
-      <div class="check"><input type="checkbox" name="terms" required><label>I agree to the Terms & Conditions.</label></div>
-      <button type="submit" class="btn" style="width:100%">Send Request <i class="fa-solid fa-paper-plane"></i></button>
+      <div class="check"><input type="checkbox" name="terms" required><label><span data-i18n="hire.terms" data-i18n-text>I agree to the Terms & Conditions.</span></label></div>
+      <button type="submit" class="btn" style="width:100%"><span data-i18n="hire.send" data-i18n-text>Send Request</span> <i class="fa-solid fa-paper-plane"></i></button>
     </form>
   </div>
 </div>
@@ -774,17 +774,17 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="orderOverlay">
   <div class="modal glass wide">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2>Place New Order</h2>
+    <h2 data-i18n="order.title">Place New Order</h2>
     <p class="sub">Select a service category and describe your brief.</p>
     <div class="form-msg" id="orderMsg"></div>
     <form id="orderForm" novalidate>
-      <label style="font-size:.82rem;font-weight:600;color:var(--txt-dim)">Service Category</label>
+      <label style="font-size:.82rem;font-weight:600;color:var(--txt-dim)" data-i18n="order.category">Service Category</label>
       <div class="cat-grid" id="orderCats"><!-- filled --></div>
       <input type="hidden" name="category" id="orderCatInput">
-      <div class="field"><label>Project Brief</label><textarea name="description" placeholder="Describe what you need, timeline, references..." required></textarea><span class="err">Please describe your project.</span></div>
+      <div class="field"><label data-i18n="order.brief">Project Brief</label><textarea name="description" placeholder="Describe what you need, timeline, references..." required></textarea><span class="err">Please describe your project.</span></div>
       <div class="dropzone" id="orderDrop"><i class="fa-solid fa-cloud-arrow-up"></i><div style="margin-top:6px">Drag & drop files here or click to browse</div><input type="file" id="orderFiles" multiple hidden></div>
       <div class="filelist" id="orderFileList"></div>
-      <button type="submit" class="btn" style="width:100%"><span id="orderSubmitTxt">Submit Order</span> <i class="fa-solid fa-paper-plane"></i></button>
+      <button type="submit" class="btn" style="width:100%"><span id="orderSubmitTxt" data-i18n="order.submit" data-i18n-text>Submit Order</span> <i class="fa-solid fa-paper-plane"></i></button>
     </form>
   </div>
 </div>
@@ -798,8 +798,8 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="fastOverlay">
   <div class="modal glass">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2><i class="fa-solid fa-bolt"></i> Priority / Fast Service?</h2>
-    <p class="sub">Do you want your order to be done fast?</p>
+    <h2><i class="fa-solid fa-bolt"></i> <span data-i18n="fast.title" data-i18n-text>Priority / Fast Service?</span></h2>
+    <p class="sub"><span data-i18n="fast.sub" data-i18n-text>Do you want your order to be done fast?</span></p>
     <div id="fastBody"><!-- filled by JS --></div>
   </div>
 </div>
@@ -808,8 +808,8 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="overlay" id="langOverlay">
   <div class="modal glass">
     <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2><i class="fa-solid fa-globe"></i> Choose Language</h2>
-    <p class="sub">Select your preferred language for the app.</p>
+    <h2><i class="fa-solid fa-globe"></i> <span data-i18n="lang.title" data-i18n-text>Choose Language</span></h2>
+    <p class="sub"><span data-i18n="lang.sub" data-i18n-text>Select your preferred language for the app.</span></p>
     <div class="field"><input id="langSearch" type="text" placeholder="Search languages..."></div>
     <div id="langList"><!-- filled by JS --></div>
   </div>
@@ -820,17 +820,17 @@ tbody tr:hover{background:var(--glass-1)}
   <div class="panel-shell">
     <aside class="sidebar">
       <div class="side-brand"><span class="logo-3d">S</span> My Dashboard</div>
-      <nav class="side-nav" id="userNav">
-        <button class="active" data-view="u-home"><i class="fa-solid fa-house"></i> Overview</button>
-        <button data-view="u-profile"><i class="fa-solid fa-user"></i> Profile</button>
-        <button data-view="u-orders"><i class="fa-solid fa-bag-shopping"></i> My Orders</button>
-        <button data-view="u-hire"><i class="fa-solid fa-handshake"></i> Hire Me</button>
-        <button data-view="u-settings"><i class="fa-solid fa-gear"></i> Settings</button>
-      </nav>
-      <div class="side-foot">
-        <button id="userHomeBtn"><i class="fa-solid fa-arrow-left"></i> Back to Site</button>
-        <button id="userLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-      </div>
+  <nav class="side-nav" id="userNav">
+    <button class="active" data-view="u-home"><i class="fa-solid fa-house"></i> <span data-i18n="user.overview" data-i18n-text>Overview</span></button>
+    <button data-view="u-profile"><i class="fa-solid fa-user"></i> <span data-i18n="user.profile" data-i18n-text>Profile</span></button>
+    <button data-view="u-orders"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="user.orders" data-i18n-text>My Orders</span></button>
+    <button data-view="u-hire"><i class="fa-solid fa-handshake"></i> <span data-i18n="hero.hire" data-i18n-text>Hire Me</span></button>
+    <button data-view="u-settings"><i class="fa-solid fa-gear"></i> <span data-i18n="user.settings" data-i18n-text>Settings</span></button>
+  </nav>
+  <div class="side-foot">
+    <button id="userHomeBtn"><i class="fa-solid fa-arrow-left"></i> Back to Site</button>
+    <button id="userLogout"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="common.logout" data-i18n-text>Logout</span></button>
+  </div>
     </aside>
     <main class="main" id="userMain"><!-- rendered --></main>
   </div>
@@ -842,20 +842,20 @@ tbody tr:hover{background:var(--glass-1)}
     <aside class="sidebar">
       <div class="owner-profile-pic" id="ownerAvatar" title="Owner profile — edit in Site Settings">S</div>
       <div class="side-brand"><span class="logo-3d" id="ownerBrandLogo">S</span> Owner Console</div>
-      <nav class="side-nav" id="ownerNav">
-        <button class="active" data-view="o-home"><i class="fa-solid fa-gauge"></i> Dashboard</button>
-        <button data-view="o-profile"><i class="fa-solid fa-sliders"></i> Site Settings</button>
-        <button data-view="o-orders"><i class="fa-solid fa-bag-shopping"></i> Orders</button>
-        <button data-view="o-users"><i class="fa-solid fa-users"></i> Users</button>
-        <button data-view="o-cats"><i class="fa-solid fa-layer-group"></i> Products</button>
-        <button data-view="o-work"><i class="fa-solid fa-briefcase"></i> Portfolio</button>
-        <button data-view="o-skills"><i class="fa-solid fa-chart-line"></i> Skills</button>
-        <button data-view="o-creds"><i class="fa-solid fa-key"></i> Credentials</button>
-      </nav>
-      <div class="side-foot">
-        <button id="ownerPreview"><i class="fa-solid fa-eye"></i> Preview Site</button>
-        <button id="ownerLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-      </div>
+  <nav class="side-nav" id="ownerNav">
+    <button class="active" data-view="o-home"><i class="fa-solid fa-gauge"></i> <span data-i18n="owner.dashboard" data-i18n-text>Dashboard</span></button>
+    <button data-view="o-profile"><i class="fa-solid fa-sliders"></i> <span data-i18n="owner.site" data-i18n-text>Site Settings</span></button>
+    <button data-view="o-orders"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="owner.orders" data-i18n-text>Orders</span></button>
+    <button data-view="o-users"><i class="fa-solid fa-users"></i> <span data-i18n="owner.users" data-i18n-text>Users</span></button>
+    <button data-view="o-cats"><i class="fa-solid fa-layer-group"></i> <span data-i18n="owner.products" data-i18n-text>Products</span></button>
+    <button data-view="o-work"><i class="fa-solid fa-briefcase"></i> <span data-i18n="owner.portfolio" data-i18n-text>Portfolio</span></button>
+    <button data-view="o-skills"><i class="fa-solid fa-chart-line"></i> <span data-i18n="owner.skills" data-i18n-text>Skills</span></button>
+    <button data-view="o-creds"><i class="fa-solid fa-key"></i> <span data-i18n="owner.creds" data-i18n-text>Credentials</span></button>
+  </nav>
+  <div class="side-foot">
+    <button id="ownerPreview"><i class="fa-solid fa-eye"></i> <span data-i18n="common.preview" data-i18n-text>Preview Site</span></button>
+    <button id="ownerLogout"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="common.logout" data-i18n-text>Logout</span></button>
+  </div>
     </aside>
     <main class="main" id="ownerMain"><!-- rendered --></main>
   </div>
@@ -1004,6 +1004,284 @@ const LANGUAGES = [
   {code:"te",en:"Telugu",native:"తెలుగు",flag:"🇮🇳",group:"all"}
 ];
 
+/* Translation dictionary for the app UI chrome.
+   `en` is the base; every other language falls back to `en` for any missing key.
+   Languages without an entry (the long "All" list) simply keep English text but still
+   get <html lang> + RTL applied. Add more keys/languages by extending this object. */
+const I18N = {
+  en:{
+    "nav.work":"Work","nav.skills":"Skills","nav.services":"Services","nav.about":"About","nav.contact":"Contact",
+    "nav.getStarted":"Get Started","nav.dashboard":"Dashboard",
+    "hero.available":"Available for Work","hero.explore":"Explore Work","hero.hire":"Hire Me",
+    "hero.years":"Years Experience","hero.projects":"Projects Done","hero.clients":"Happy Clients",
+    "contact.whatsapp":"WhatsApp","contact.email":"Email","contact.hire":"Hire Me",
+    "contact.accepting":"Currently Accepting New Projects","contact.start":"Start a Project",
+    "social.title":"Find Me Online",
+    "footer":"Crafted with 3D, glass & code.",
+    "auth.welcome":"Welcome Back","auth.emailUser":"Email or Username","auth.password":"Password",
+    "auth.login":"Log In","auth.google":"Sign in with Google","auth.newHere":"New here? Create an account",
+    "auth.forgot":"Forgot password?","auth.create":"Create Account","auth.fullName":"Full Name",
+    "auth.username":"Username","auth.phone":"Phone","auth.signup":"Sign Up","auth.haveAccount":"Already have an account? Log in",
+    "auth.reset":"Reset Password","auth.sendReset":"Send Reset Link","auth.backLogin":"Back to login",
+    "hire.title":"Hire Me","hire.name":"Name","hire.email":"Email","hire.phone":"Phone",
+    "hire.message":"Message","hire.send":"Send Request","hire.terms":"I agree to the Terms & Conditions.",
+    "order.title":"Place New Order","order.category":"Service Category","order.brief":"Project Brief",
+    "order.submit":"Submit Order","orderNow":"Order Now",
+    "fast.title":"Priority / Fast Service?","fast.sub":"Do you want your order to be done fast?",
+    "fast.yes":"Yes, send via WhatsApp","fast.no":"No, standard delivery",
+    "lang.title":"Choose Language","lang.sub":"Select your preferred language for the app.",
+    "lang.search":"Search languages...","lang.basic":"Basic","lang.all":"All Languages","lang.none":"No languages found.",
+    "user.overview":"Overview","user.profile":"Profile","user.orders":"My Orders","user.settings":"Settings",
+    "owner.dashboard":"Dashboard","owner.site":"Site Settings","owner.orders":"Orders","owner.users":"Users",
+    "owner.products":"Products","owner.portfolio":"Portfolio","owner.skills":"Skills","owner.creds":"Credentials",
+    "common.logout":"Logout","common.preview":"Live Preview","owner.pricing":"Products & Pricing"
+  },
+  ur:{
+    "nav.work":"کام","nav.skills":"مہارتیں","nav.services":"سروسز","nav.about":"ہمارے بارے میں","nav.contact":"رابطہ",
+    "nav.getStarted":"شروع کریں","nav.dashboard":"ڈیش بورڈ",
+    "hero.available":"کام کے لیے دستیاب","hero.explore":"کام دیکھیں","hero.hire":"مجھے کام پر رکھیں",
+    "hero.years":"سالوں کا تجربہ","hero.projects":"مکمل شدہ پروجیکٹس","hero.clients":"خوش مہمان",
+    "contact.whatsapp":"واٹس ایپ","contact.email":"ای میل","contact.hire":"مجھے کام پر رکھیں",
+    "contact.accepting":"فی الوقت نئے پروجیکٹس قبول کیے جا رہے ہیں","contact.start":"پروجیکٹ شروع کریں",
+    "social.title":"مجھے آن لائن تلاش کریں",
+    "footer":"3D، گلاس اور کوڈ کے ساتھ تیار کردہ۔",
+    "auth.welcome":"واپس خوش آمدید","auth.emailUser":"ای میل یا صارف نام","auth.password":"پاس ورڈ",
+    "auth.login":"لاگ ان","auth.google":"گوگل سے سائن ان","auth.newHere":"نیا ہیں؟ اکاؤنٹ بنائیں",
+    "auth.forgot":"پاس ورڈ بھول گئے؟","auth.create":"اکاؤنٹ بنائیں","auth.fullName":"پورا نام",
+    "auth.username":"صارف نام","auth.phone":"فون","auth.signup":"سائن اپ","auth.haveAccount":"پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں",
+    "auth.reset":"پاس ورڈ ری سیٹ کریں","auth.sendReset":"ری سیٹ لنک بھیجیں","auth.backLogin":"واپس لاگ ان پر",
+    "hire.title":"مجھے کام پر رکھیں","hire.name":"نام","hire.email":"ای میل","hire.phone":"فون",
+    "hire.message":"پیغام","hire.send":"درخواست بھیجیں","hire.terms":"میں شرائط و ضوابط سے متفق ہوں۔",
+    "order.title":"نیا آرڈر دیں","order.category":"سروس کیٹیگری","order.brief":"پروجیکٹ بریف",
+    "order.submit":"آرڈر جمع کروائیں","orderNow":"ابھی آرڈر کریں",
+    "fast.title":"ترجیحی / فوری سروس؟","fast.sub":"کیا آپ اپنا آرڈر جلد مکمل کروانا چاہتے ہیں؟",
+    "fast.yes":"ہاں، واٹس ایپ پر بھیجیں","fast.no":"نہیں، عام ڈیلیوری",
+    "lang.title":"زبان منتخب کریں","lang.sub":"اپنی پسندیدہ زبان منتخب کریں۔",
+    "lang.search":"زبانیں تلاش کریں...","lang.basic":"بنیادی","lang.all":"تمام زبانیں","lang.none":"کوئی زبان نہیں ملی۔",
+    "user.overview":"جائزہ","user.profile":"پروفائل","user.orders":"میرے آرڈرز","user.settings":"ترتیبات",
+    "owner.dashboard":"ڈیش بورڈ","owner.site":"سائٹ کی ترتیبات","owner.orders":"آرڈرز","owner.users":"صارفین",
+    "owner.products":"پروڈکٹس","owner.portfolio":"پورٹ فولیو","owner.skills":"مہارتیں","owner.creds":"اسناد",
+    "common.logout":"لاگ آؤٹ","common.preview":"لائیو پریویو"
+  },
+  ar:{
+    "nav.work":"أعمال","nav.skills":"مهارات","nav.services":"خدمات","nav.about":"من نحن","nav.contact":"اتصل بنا",
+    "nav.getStarted":"ابدأ","nav.dashboard":"لوحة التحكم",
+    "hero.available":"متاح للعمل","hero.explore":"استكشف الأعمال","hero.hire":"وظفني",
+    "hero.years":"سنوات خبرة","hero.projects":"مشاريع منجزة","hero.clients":"عملاء سعداء",
+    "contact.whatsapp":"واتساب","contact.email":"البريد الإلكتروني","contact.hire":"وظفني",
+    "contact.accepting":"نقبل مشاريع جديدة حالياً","contact.start":"ابدأ مشروعاً",
+    "social.title":"تابعني عبر الإنترنت",
+    "footer":"صُنع بـ 3D وزجاج وكود.",
+    "auth.welcome":"مرحباً بعودتك","auth.emailUser":"البريد الإلكتروني أو اسم المستخدم","auth.password":"كلمة المرور",
+    "auth.login":"تسجيل الدخول","auth.google":"تسجيل الدخول عبر Google","auth.newHere":"جديد هنا؟ أنشئ حساباً",
+    "auth.forgot":"هل نسيت كلمة المرور؟","auth.create":"إنشاء حساب","auth.fullName":"الاسم الكامل",
+    "auth.username":"اسم المستخدم","auth.phone":"الهاتف","auth.signup":"التسجيل","auth.haveAccount":"لديك حساب بالفعل؟ سجل الدخول",
+    "auth.reset":"إعادة تعيين كلمة المرور","auth.sendReset":"إرسال رابط إعادة التعيين","auth.backLogin":"العودة لتسجيل الدخول",
+    "hire.title":"وظفني","hire.name":"الاسم","hire.email":"البريد الإلكتروني","hire.phone":"الهاتف",
+    "hire.message":"الرسالة","hire.send":"إرسال الطلب","hire.terms":"أوافق على الشروط والأحكام.",
+    "order.title":"قدم طلباً جديداً","order.category":"فئة الخدمة","order.brief":"وصف المشروع",
+    "order.submit":"إرسال الطلب","orderNow":"اطلب الآن",
+    "fast.title":"خدمة سريعة / ذات أولوية؟","fast.sub":"هل تريد إنجاز طلبك بسرعة؟",
+    "fast.yes":"نعم، أرسل عبر واتساب","fast.no":"لا، توصيل عادي",
+    "lang.title":"اختر اللغة","lang.sub":"اختر لغتك المفضلة للتطبيق.",
+    "lang.search":"ابحث عن اللغات...","lang.basic":"الأساسية","lang.all":"جميع اللغات","lang.none":"لم يتم العثور على لغات.",
+    "user.overview":"نظرة عامة","user.profile":"الملف الشخصي","user.orders":"طلباتي","user.settings":"الإعدادات",
+    "owner.dashboard":"لوحة التحكم","owner.site":"إعدادات الموقع","owner.orders":"الطلبات","owner.users":"المستخدمون",
+    "owner.products":"المنتجات","owner.portfolio":"أعمالنا","owner.skills":"المهارات","owner.creds":"البيانات",
+    "common.logout":"تسجيل الخروج","common.preview":"معاينة مباشرة"
+  },
+  es:{
+    "nav.work":"Trabajos","nav.skills":"Habilidades","nav.services":"Servicios","nav.about":"Acerca de","nav.contact":"Contacto",
+    "nav.getStarted":"Comenzar","nav.dashboard":"Panel",
+    "hero.available":"Disponible para trabajar","hero.explore":"Explorar trabajos","hero.hire":"Contrátame",
+    "hero.years":"Años de experiencia","hero.projects":"Proyectos realizados","hero.clients":"Clientes felices",
+    "contact.whatsapp":"WhatsApp","contact.email":"Correo","contact.hire":"Contrátame",
+    "contact.accepting":"Aceptando nuevos proyectos","contact.start":"Iniciar un proyecto",
+    "social.title":"Encuéntrame en línea",
+    "footer":"Creado con 3D, vidrio y código.",
+    "auth.welcome":"Bienvenido de nuevo","auth.emailUser":"Correo o usuario","auth.password":"Contraseña",
+    "auth.login":"Iniciar sesión","auth.google":"Entrar con Google","auth.newHere":"¿Nuevo? Crea una cuenta",
+    "auth.forgot":"¿Olvidaste tu contraseña?","auth.create":"Crear cuenta","auth.fullName":"Nombre completo",
+    "auth.username":"Usuario","auth.phone":"Teléfono","auth.signup":"Registrarse","auth.haveAccount":"¿Ya tienes cuenta? Inicia sesión",
+    "auth.reset":"Restablecer contraseña","auth.sendReset":"Enviar enlace","auth.backLogin":"Volver al inicio de sesión",
+    "hire.title":"Contrátame","hire.name":"Nombre","hire.email":"Correo","hire.phone":"Teléfono",
+    "hire.message":"Mensaje","hire.send":"Enviar solicitud","hire.terms":"Acepto los Términos y Condiciones.",
+    "order.title":"Realizar pedido","order.category":"Categoría de servicio","order.brief":"Descripción del proyecto",
+    "order.submit":"Enviar pedido","orderNow":"Pedir ahora",
+    "fast.title":"¿Servicio prioritario / rápido?","fast.sub":"¿Quieres que tu pedido se haga rápido?",
+    "fast.yes":"Sí, enviar por WhatsApp","fast.no":"No, entrega normal",
+    "lang.title":"Elegir idioma","lang.sub":"Selecciona tu idioma preferido para la app.",
+    "lang.search":"Buscar idiomas...","lang.basic":"Básico","lang.all":"Todos los idiomas","lang.none":"No se encontraron idiomas.",
+    "user.overview":"Resumen","user.profile":"Perfil","user.orders":"Mis pedidos","user.settings":"Ajustes",
+    "owner.dashboard":"Panel","owner.site":"Ajustes del sitio","owner.orders":"Pedidos","owner.users":"Usuarios",
+    "owner.products":"Productos","owner.portfolio":"Portafolio","owner.skills":"Habilidades","owner.creds":"Credenciales",
+    "common.logout":"Cerrar sesión","common.preview":"Vista previa"
+  },
+  hi:{
+    "nav.work":"काम","nav.skills":"कौशल","nav.services":"सेवाएँ","nav.about":"हमारे बारे में","nav.contact":"संपर्क",
+    "nav.getStarted":"शुरू करें","nav.dashboard":"डैशबोर्ड",
+    "hero.available":"काम के लिए उपलब्ध","hero.explore":"काम देखें","hero.hire":"मुझे काम दें",
+    "hero.years":"वर्षों का अनुभव","hero.projects":"पूर्ण किए गए प्रोजेक्ट","hero.clients":"खुश ग्राहक",
+    "contact.whatsapp":"व्हाट्सएप","contact.email":"ईमेल","contact.hire":"मुझे काम दें",
+    "contact.accepting":"फिलहाल नए प्रोजेक्ट स्वीकार कर रहे हैं","contact.start":"प्रोजेक्ट शुरू करें",
+    "social.title":"मुझे ऑनलाइन खोजें",
+    "footer":"3D, ग्लास और कोड के साथ निर्मित।",
+    "auth.welcome":"वापसी पर स्वागत है","auth.emailUser":"ईमेल या उपयोगकर्ता नाम","auth.password":"पासवर्ड",
+    "auth.login":"लॉग इन","auth.google":"Google से साइन इन","auth.newHere":"नए हैं? खाता बनाएँ",
+    "auth.forgot":"पासवर्ड भूल गए?","auth.create":"खाता बनाएँ","auth.fullName":"पूरा नाम",
+    "auth.username":"उपयोगकर्ता नाम","auth.phone":"फोन","auth.signup":"साइन अप","auth.haveAccount":"पहले से खाता है? लॉग इन करें",
+    "auth.reset":"पासवर्ड रीसेट करें","auth.sendReset":"रीसेट लिंक भेजें","auth.backLogin":"लॉगिन पर वापस",
+    "hire.title":"मुझे काम दें","hire.name":"नाम","hire.email":"ईमेल","hire.phone":"फोन",
+    "hire.message":"संदेश","hire.send":"अनुरोध भेजें","hire.terms":"मैं नियम और शर्तों से सहमत हूँ।",
+    "order.title":"ऑर्डर करें","order.category":"सेवा श्रेणी","order.brief":"प्रोजेक्ट विवरण",
+    "order.submit":"ऑर्डर सबमिट करें","orderNow":"अभी ऑर्डर करें",
+    "fast.title":"प्राथमिकता / त्वरित सेवा?","fast.sub":"क्या आप अपना ऑर्डर जल्दी करवाना चाहते हैं?",
+    "fast.yes":"हाँ, व्हाट्सएप पर भेजें","fast.no":"नहीं, सामान्य डिलीवरी",
+    "lang.title":"भाषा चुनें","lang.sub":"ऐप के लिए अपनी पसंदीदा भाषा चुनें।",
+    "lang.search":"भाषाएँ खोजें...","lang.basic":"बुनियादी","lang.all":"सभी भाषाएँ","lang.none":"कोई भाषा नहीं मिली।",
+    "user.overview":"अवलोकन","user.profile":"प्रोफ़ाइल","user.orders":"मेरे ऑर्डर","user.settings":"सेटिंग्स",
+    "owner.dashboard":"डैशबोर्ड","owner.site":"साइट सेटिंग्स","owner.orders":"ऑर्डर","owner.users":"उपयोगकर्ता",
+    "owner.products":"प्रोडक्ट्स","owner.portfolio":"पोर्टफोलियो","owner.skills":"कौशल","owner.creds":"क्रेडेंशियल",
+    "common.logout":"लॉगआउट","common.preview":"लाइव प्रीव्यू"
+  },
+  fr:{
+    "nav.work":"Travaux","nav.skills":"Compétences","nav.services":"Services","nav.about":"À propos","nav.contact":"Contact",
+    "nav.getStarted":"Commencer","nav.dashboard":"Tableau de bord",
+    "hero.available":"Disponible pour travailler","hero.explore":"Explorer les travaux","hero.hire":"Embauchez-moi",
+    "hero.years":"Années d'expérience","hero.projects":"Projets réalisés","hero.clients":"Clients satisfaits",
+    "contact.whatsapp":"WhatsApp","contact.email":"E-mail","contact.hire":"Embauchez-moi",
+    "contact.accepting":"Accepte de nouveaux projets","contact.start":"Démarrer un projet",
+    "social.title":"Retrouvez-moi en ligne",
+    "footer":"Conçu avec 3D, verre et code.",
+    "auth.welcome":"Bon retour","auth.emailUser":"E-mail ou nom d'utilisateur","auth.password":"Mot de passe",
+    "auth.login":"Se connecter","auth.google":"Se connecter avec Google","auth.newHere":"Nouveau ? Créez un compte",
+    "auth.forgot":"Mot de passe oublié ?","auth.create":"Créer un compte","auth.fullName":"Nom complet",
+    "auth.username":"Nom d'utilisateur","auth.phone":"Téléphone","auth.signup":"S'inscrire","auth.haveAccount":"Vous avez déjà un compte ? Connectez-vous",
+    "auth.reset":"Réinitialiser le mot de passe","auth.sendReset":"Envoyer le lien","auth.backLogin":"Retour à la connexion",
+    "hire.title":"Embauchez-moi","hire.name":"Nom","hire.email":"E-mail","hire.phone":"Téléphone",
+    "hire.message":"Message","hire.send":"Envoyer la demande","hire.terms":"J'accepte les Conditions Générales.",
+    "order.title":"Passer une commande","order.category":"Catégorie de service","order.brief":"Description du projet",
+    "order.submit":"Envoyer la commande","orderNow":"Commander maintenant",
+    "fast.title":"Service prioritaire / rapide ?","fast.sub":"Voulez-vous que votre commande soit traitée rapidement ?",
+    "fast.yes":"Oui, envoyer via WhatsApp","fast.no":"Non, livraison standard",
+    "lang.title":"Choisir la langue","lang.sub":"Choisissez votre langue préférée pour l'application.",
+    "lang.search":"Rechercher des langues...","lang.basic":"Basique","lang.all":"Toutes les langues","lang.none":"Aucune langue trouvée.",
+    "user.overview":"Aperçu","user.profile":"Profil","user.orders":"Mes commandes","user.settings":"Paramètres",
+    "owner.dashboard":"Tableau de bord","owner.site":"Paramètres du site","owner.orders":"Commandes","owner.users":"Utilisateurs",
+    "owner.products":"Produits","owner.portfolio":"Portfolio","owner.skills":"Compétences","owner.creds":"Identifiants",
+    "common.logout":"Déconnexion","common.preview":"Aperçu"
+  },
+  de:{
+    "nav.work":"Arbeiten","nav.skills":"Fähigkeiten","nav.services":"Leistungen","nav.about":"Über uns","nav.contact":"Kontakt",
+    "nav.getStarted":"Loslegen","nav.dashboard":"Dashboard",
+    "hero.available":"Verfügbar für Arbeit","hero.explore":"Arbeiten ansehen","hero.hire":"Stellen Sie mich ein",
+    "hero.years":"Jahre Erfahrung","hero.projects":"Abgeschlossene Projekte","hero.clients":"Zufriedene Kunden",
+    "contact.whatsapp":"WhatsApp","contact.email":"E-Mail","contact.hire":"Stellen Sie mich ein",
+    "contact.accepting":"Aktuell werden neue Projekte angenommen","contact.start":"Projekt starten",
+    "social.title":"Finden Sie mich online",
+    "footer":"Gestaltet mit 3D, Glas & Code.",
+    "auth.welcome":"Willkommen zurück","auth.emailUser":"E-Mail oder Benutzername","auth.password":"Passwort",
+    "auth.login":"Anmelden","auth.google":"Mit Google anmelden","auth.newHere":"Neu hier? Konto erstellen",
+    "auth.forgot":"Passwort vergessen?","auth.create":"Konto erstellen","auth.fullName":"Vollständiger Name",
+    "auth.username":"Benutzername","auth.phone":"Telefon","auth.signup":"Registrieren","auth.haveAccount":"Bereits ein Konto? Anmelden",
+    "auth.reset":"Passwort zurücksetzen","auth.sendReset":"Link senden","auth.backLogin":"Zurück zur Anmeldung",
+    "hire.title":"Stellen Sie mich ein","hire.name":"Name","hire.email":"E-Mail","hire.phone":"Telefon",
+    "hire.message":"Nachricht","hire.send":"Anfrage senden","hire.terms":"Ich stimme den AGB zu.",
+    "order.title":"Neue Bestellung","order.category":"Service-Kategorie","order.brief":"Projekt-Briefing",
+    "order.submit":"Bestellung senden","orderNow":"Jetzt bestellen",
+    "fast.title":"Prioritäts- / Express-Service?","fast.sub":"Möchten Sie Ihre Bestellung schnell erledigen?",
+    "fast.yes":"Ja, per WhatsApp senden","fast.no":"Nein, Standard-Lieferung",
+    "lang.title":"Sprache wählen","lang.sub":"Wählen Sie Ihre bevorzugte Sprache für die App.",
+    "lang.search":"Sprachen suchen...","lang.basic":"Basis","lang.all":"Alle Sprachen","lang.none":"Keine Sprachen gefunden.",
+    "user.overview":"Übersicht","user.profile":"Profil","user.orders":"Meine Bestellungen","user.settings":"Einstellungen",
+    "owner.dashboard":"Dashboard","owner.site":"Site-Einstellungen","owner.orders":"Bestellungen","owner.users":"Benutzer",
+    "owner.products":"Produkte","owner.portfolio":"Portfolio","owner.skills":"Fähigkeiten","owner.creds":"Zugangsdaten",
+    "common.logout":"Abmelden","common.preview":"Live-Vorschau"
+  },
+  zh:{
+    "nav.work":"作品","nav.skills":"技能","nav.services":"服务","nav.about":"关于","nav.contact":"联系",
+    "nav.getStarted":"开始使用","nav.dashboard":"控制面板",
+    "hero.available":"可接受工作","hero.explore":"浏览作品","hero.hire":"雇佣我",
+    "hero.years":"年经验","hero.projects":"已完成项目","hero.clients":"满意客户",
+    "contact.whatsapp":"WhatsApp","contact.email":"电子邮件","contact.hire":"雇佣我",
+    "contact.accepting":"目前正在接受新项目","contact.start":"开始一个项目",
+    "social.title":"在线找到我",
+    "footer":"由 3D、玻璃与代码精心打造。",
+    "auth.welcome":"欢迎回来","auth.emailUser":"电子邮件或用户名","auth.password":"密码",
+    "auth.login":"登录","auth.google":"使用 Google 登录","auth.newHere":"新用户？创建账户",
+    "auth.forgot":"忘记密码？","auth.create":"创建账户","auth.fullName":"全名",
+    "auth.username":"用户名","auth.phone":"电话","auth.signup":"注册","auth.haveAccount":"已有账户？登录",
+    "auth.reset":"重置密码","auth.sendReset":"发送重置链接","auth.backLogin":"返回登录",
+    "hire.title":"雇佣我","hire.name":"姓名","hire.email":"电子邮件","hire.phone":"电话",
+    "hire.message":"留言","hire.send":"发送请求","hire.terms":"我同意条款与条件。",
+    "order.title":"下订单","order.category":"服务类别","order.brief":"项目简介",
+    "order.submit":"提交订单","orderNow":"立即订购",
+    "fast.title":"加急 / 优先服务？","fast.sub":"您希望加急处理订单吗？",
+    "fast.yes":"是，通过 WhatsApp 发送","fast.no":"否，普通交付",
+    "lang.title":"选择语言","lang.sub":"为应用选择您的首选语言。",
+    "lang.search":"搜索语言...","lang.basic":"基础","lang.all":"所有语言","lang.none":"未找到语言。",
+    "user.overview":"概览","user.profile":"个人资料","user.orders":"我的订单","user.settings":"设置",
+    "owner.dashboard":"控制面板","owner.site":"网站设置","owner.orders":"订单","owner.users":"用户",
+    "owner.products":"产品","owner.portfolio":"作品集","owner.skills":"技能","owner.creds":"凭据",
+    "common.logout":"退出登录","common.preview":"实时预览"
+  },
+  pt:{
+    "nav.work":"Trabalhos","nav.skills":"Habilidades","nav.services":"Serviços","nav.about":"Sobre","nav.contact":"Contato",
+    "nav.getStarted":"Começar","nav.dashboard":"Painel",
+    "hero.available":"Disponível para trabalho","hero.explore":"Explorar trabalhos","hero.hire":"Contrate-me",
+    "hero.years":"Anos de experiência","hero.projects":"Projetos concluídos","hero.clients":"Clientes felizes",
+    "contact.whatsapp":"WhatsApp","contact.email":"E-mail","contact.hire":"Contrate-me",
+    "contact.accepting":"Aceitando novos projetos","contact.start":"Iniciar um projeto",
+    "social.title":"Encontre-me online",
+    "footer":"Criado com 3D, vidro e código.",
+    "auth.welcome":"Bem-vindo de volta","auth.emailUser":"E-mail ou usuário","auth.password":"Senha",
+    "auth.login":"Entrar","auth.google":"Entrar com Google","auth.newHere":"Novo aqui? Crie uma conta",
+    "auth.forgot":"Esqueceu a senha?","auth.create":"Criar conta","auth.fullName":"Nome completo",
+    "auth.username":"Usuário","auth.phone":"Telefone","auth.signup":"Cadastrar","auth.haveAccount":"Já tem conta? Entre",
+    "auth.reset":"Redefinir senha","auth.sendReset":"Enviar link","auth.backLogin":"Voltar ao login",
+    "hire.title":"Contrate-me","hire.name":"Nome","hire.email":"E-mail","hire.phone":"Telefone",
+    "hire.message":"Mensagem","hire.send":"Enviar pedido","hire.terms":"Concordo com os Termos e Condições.",
+    "order.title":"Fazer pedido","order.category":"Categoria de serviço","order.brief":"Descrição do projeto",
+    "order.submit":"Enviar pedido","orderNow":"Pedir agora",
+    "fast.title":"Serviço prioritário / rápido?","fast.sub":"Deseja que seu pedido seja feito rápido?",
+    "fast.yes":"Sim, enviar via WhatsApp","fast.no":"Não, entrega normal",
+    "lang.title":"Escolher idioma","lang.sub":"Selecione seu idioma preferido para o app.",
+    "lang.search":"Buscar idiomas...","lang.basic":"Básico","lang.all":"Todos os idiomas","lang.none":"Nenhum idioma encontrado.",
+    "user.overview":"Visão geral","user.profile":"Perfil","user.orders":"Meus pedidos","user.settings":"Configurações",
+    "owner.dashboard":"Painel","owner.site":"Configurações do site","owner.orders":"Pedidos","owner.users":"Usuários",
+    "owner.products":"Produtos","owner.portfolio":"Portfólio","owner.skills":"Habilidades","owner.creds":"Credenciais",
+    "common.logout":"Sair","common.preview":"Pré-visualização"
+  },
+  ru:{
+    "nav.work":"Работы","nav.skills":"Навыки","nav.services":"Услуги","nav.about":"О нас","nav.contact":"Контакт",
+    "nav.getStarted":"Начать","nav.dashboard":"Панель",
+    "hero.available":"Доступен для работы","hero.explore":"Смотреть работы","hero.hire":"Наймите меня",
+    "hero.years":"Лет опыта","hero.projects":"Выполненные проекты","hero.clients":"Довольные клиенты",
+    "contact.whatsapp":"WhatsApp","contact.email":"Эл. почта","contact.hire":"Наймите меня",
+    "contact.accepting":"Сейчас принимаю новые проекты","contact.start":"Начать проект",
+    "social.title":"Найдите меня онлайн",
+    "footer":"Создано с 3D, стеклом и кодом.",
+    "auth.welcome":"С возвращением","auth.emailUser":"Эл. почта или логин","auth.password":"Пароль",
+    "auth.login":"Войти","auth.google":"Войти через Google","auth.newHere":"Новый здесь? Создать аккаунт",
+    "auth.forgot":"Забыли пароль?","auth.create":"Создать аккаунт","auth.fullName":"Полное имя",
+    "auth.username":"Логин","auth.phone":"Телефон","auth.signup":"Регистрация","auth.haveAccount":"Уже есть аккаунт? Войти",
+    "auth.reset":"Сбросить пароль","auth.sendReset":"Отправить ссылку","auth.backLogin":"Назад ко входу",
+    "hire.title":"Наймите меня","hire.name":"Имя","hire.email":"Эл. почта","hire.phone":"Телефон",
+    "hire.message":"Сообщение","hire.send":"Отправить заявку","hire.terms":"Я согласен с Условиями и Положениями.",
+    "order.title":"Сделать заказ","order.category":"Категория услуги","order.brief":"Описание проекта",
+    "order.submit":"Отправить заказ","orderNow":"Заказать сейчас",
+    "fast.title":"Приоритетная / срочная услуга?","fast.sub":"Хотите, чтобы заказ выполнили быстро?",
+    "fast.yes":"Да, отправить через WhatsApp","fast.no":"Нет, обычная доставка",
+    "lang.title":"Выбрать язык","lang.sub":"Выберите предпочитаемый язык приложения.",
+    "lang.search":"Искать языки...","lang.basic":"Базовые","lang.all":"Все языки","lang.none":"Языки не найдены.",
+    "user.overview":"Обзор","user.profile":"Профиль","user.orders":"Мои заказы","user.settings":"Настройки",
+    "owner.dashboard":"Панель","owner.site":"Настройки сайта","owner.orders":"Заказы","owner.users":"Пользователи",
+    "owner.products":"Продукты","owner.portfolio":"Портфолио","owner.skills":"Навыки","owner.creds":"Учётные данные",
+    "common.logout":"Выйти","common.preview":"Предпросмотр"
+  }
+};
+/* Languages written right-to-left (RTL) */
+const RTL_LANGS = ["ar","ur","fa","he"];
 /* Owner-defined products (seeded into Firestore categories collection) — prices in USD */
 const DEFAULT_PRODUCTS = [
   {name:"Logo & Brand Identity", price:80, kw:"logo"},
@@ -1060,7 +1338,7 @@ function renderServices(){ const grid=$("#servicesGrid"); if(!grid) return; cons
   grid.innerHTML = list.map((c,i)=>{ const price=(c.price!=null)?formatPrice(c.price,cur):"Contact"; const media=productMediaHtml(c);
     return `<div class="service-card glass reveal" style="transition-delay:${i*40}ms">
       <div class="service-media">${media}</div>
-      <div class="service-body"><h3>${esc(c.name)}</h3><div class="price">${price}</div>${c.desc?`<p>${esc(c.desc)}</p>`:""}<button class="btn ghost" data-order="${esc(c.name)}">Order Now</button></div>
+      <div class="service-body"><h3>${esc(c.name)}</h3><div class="price">${price}</div>${c.desc?`<p>${esc(c.desc)}</p>`:""}<button class="btn ghost" data-order="${esc(c.name)}">${t("orderNow")}</button></div>
     </div>`; }).join("");
   $$("[data-order]",grid).forEach(b=>b.addEventListener("click",()=>{ State._preCat=b.dataset.order; if(!State.currentUser){ openModal("loginOverlay"); toast("Log in to place an order.","info"); } else openOrderModal(); }));
   initReveal();
@@ -1550,13 +1828,14 @@ function setUserView(view){
   else if(view==="u-settings") main.innerHTML = userSettings(u);
   wireUserView(view);
   wirePasswordToggles();
+  applyLang();
   main.scrollTop=0;
 }
 function userHome(u){
   const myOrders = State.orders.filter(o=>o.userId===u.id || o.email===u.email);
   const pending = myOrders.filter(o=>o.status==="pending"||o.status==="in-progress").length;
   return `
-  <div class="panel-top"><div><h1>Overview</h1><div class="crumb">Welcome back, ${esc(u.name||"User")} 👋</div></div></div>
+  <div class="panel-top"><div><h1 data-i18n="user.overview">Overview</h1><div class="crumb">Welcome back, ${esc(u.name||"User")} 👋</div></div></div>
   <div class="stat-cards">
     <div class="stat-card glass"><div class="ic"><i class="fa-solid fa-bag-shopping"></i></div><div class="n">${myOrders.length}</div><div class="l">My Orders</div></div>
     <div class="stat-card glass"><div class="ic"><i class="fa-solid fa-spinner"></i></div><div class="n">${pending}</div><div class="l">In Progress</div></div>
@@ -1584,7 +1863,7 @@ function orderTableMini(arr){
 function cap(s){ return s? s.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):''; }
 function userProfile(u){
   return `
-  <div class="panel-top"><div><h1>Profile</h1><div class="crumb">Manage your personal information</div></div></div>
+  <div class="panel-top"><div><h1 data-i18n="user.profile">Profile</h1><div class="crumb">Manage your personal information</div></div></div>
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-user-pen"></i> Personal Info</h2>
     <form id="profileForm">
@@ -1620,7 +1899,7 @@ function userOrders(){
   const u=State.currentUser||{};
   const my = State.orders.filter(o=>o.userId===u.id || o.email===u.email);
   return `
-  <div class="panel-top"><div><h1>My Orders</h1><div class="crumb">${my.length} order(s)</div></div>
+  <div class="panel-top"><div><h1 data-i18n="user.orders">My Orders</h1><div class="crumb">${my.length} order(s)</div></div>
     <div style="margin-left:auto"><button class="btn" id="uoNew"><i class="fa-solid fa-plus"></i> Place Order</button></div></div>
   <div class="panel-card glass">
     ${my.length? `<div class="table-wrap"><table>
@@ -1635,7 +1914,7 @@ function userOrders(){
 }
 function userHire(){
   return `
-  <div class="panel-top"><div><h1>Hire Me</h1><div class="crumb">Send a collaboration request</div></div></div>
+  <div class="panel-top"><div><h1 data-i18n="hero.hire">Hire Me</h1><div class="crumb">Send a collaboration request</div></div></div>
   <div class="panel-card glass">
     <form id="hireFormPanel" novalidate>
       <div class="toolbar" style="margin-bottom:14px">
@@ -1654,7 +1933,7 @@ function userHire(){
 }
 function userSettings(u){
   return `
-  <div class="panel-top"><div><h1>Settings</h1><div class="crumb">Account management</div></div></div>
+  <div class="panel-top"><div><h1 data-i18n="user.settings">Settings</h1><div class="crumb">Account management</div></div></div>
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h2>
     <p style="color:var(--muted);margin-bottom:14px">Permanently delete your account and all associated data.</p>
@@ -1781,10 +2060,11 @@ function showFastModal(order){
       <p style="color:var(--muted);font-size:.88rem">Get priority handling. Your order <b>${esc(order.orderId)}</b> will be sent directly to the admin on WhatsApp with your name, order ID and full brief.</p>
     </div>
     <div class="toolbar">
-      <button class="btn" id="fastYes"><i class="fa-solid fa-paper-plane"></i> Yes, send via WhatsApp</button>
-      <button class="btn ghost" id="fastNo">No, standard delivery</button>
+      <button class="btn" id="fastYes"><i class="fa-solid fa-paper-plane"></i> ${t("fast.yes")}</button>
+      <button class="btn ghost" id="fastNo">${t("fast.no")}</button>
     </div>`;
   openModal("fastOverlay");
+  applyLang();
   $("#fastYes").onclick = async ()=>{
     await Backend.updateOrder(order.id,{fast:true, fastFee:fee});
     if(!State.orders.find(x=>x.id===order.id)) State.orders.unshift({...order,fast:true,fastFee:fee});
@@ -1844,7 +2124,7 @@ function setOwnerView(view){
   else if(view==="o-work") main.innerHTML=ownerWork();
   else if(view==="o-skills") main.innerHTML=ownerSkills();
   else if(view==="o-creds") main.innerHTML=ownerCreds();
-  wireOwnerView(view); wirePasswordToggles(); main.scrollTop=0;
+  wireOwnerView(view); wirePasswordToggles(); applyLang(); main.scrollTop=0;
 }
 function ownerHome(){
   const users=State.users, orders=State.orders;
@@ -1853,7 +2133,7 @@ function ownerHome(){
   return `
   <div class="panel-top">
     <button class="menu-btn" id="oMenu"><i class="fa-solid fa-bars"></i></button>
-    <div><h1>Dashboard</h1><div class="crumb">Real-time overview · ${Backend.mode()==="firebase"?"Firebase":"Demo"} mode</div></div>
+    <div><h1 data-i18n="owner.dashboard">Dashboard</h1><div class="crumb">Real-time overview · ${Backend.mode()==="firebase"?"Firebase":"Demo"} mode</div></div>
   </div>
   <div class="stat-cards">
     <div class="stat-card glass"><div class="ic"><i class="fa-solid fa-users"></i></div><div class="n">${users.length}</div><div class="l">Total Users</div></div>
@@ -1875,7 +2155,7 @@ function ownerHome(){
 function ownerProfile(){
   const s=State.settings;
   return `
-  <div class="panel-top"><div><h1>Site Settings</h1><div class="crumb">Edits reflect on the public site instantly</div></div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.site">Site Settings</h1><div class="crumb">Edits reflect on the public site instantly</div></div></div>
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-image"></i> Branding & Images</h2>
     <div class="toolbar" style="align-items:flex-start;margin-bottom:18px">
@@ -1995,7 +2275,7 @@ function bindSocialRows(wrap){
 }
 function ownerOrders(){
   return `
-  <div class="panel-top"><div><h1>Order Management</h1><div class="crumb">${State.orders.length} order(s)</div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.orders">Order Management</h1><div class="crumb">${State.orders.length} order(s)</div></div>
     <div style="margin-left:auto"><button class="btn" id="exportOrders"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
   <div class="panel-card glass">
     <div class="toolbar">
@@ -2032,7 +2312,7 @@ function renderOrdersTable(){
 }
 function ownerUsers(){
   return `
-  <div class="panel-top"><div><h1>User Management</h1><div class="crumb">${State.users.length} user(s)</div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.users">User Management</h1><div class="crumb">${State.users.length} user(s)</div></div>
     <div style="margin-left:auto"><button class="btn" id="exportUsers"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
   <div class="panel-card glass">
     <div class="toolbar">
@@ -2085,7 +2365,7 @@ function showUserDetail(id){
 function ownerProducts(){
   const cats = State.cats.length?State.cats:[];
   return `
-  <div class="panel-top"><div><h1>Products & Pricing</h1><div class="crumb">${cats.length} service(s) · prices stored in USD</div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.pricing">Products & Pricing</h1><div class="crumb">${cats.length} service(s) · prices stored in USD</div></div>
     <div style="margin-left:auto"><button class="btn" id="exportProds"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-tag"></i> Add / Edit Service</h2>
@@ -2157,7 +2437,7 @@ function wireProdForm(){
 function ownerWork(){
   const projects = State.projects.length?State.projects:[];
   return `
-  <div class="panel-top"><div><h1>Portfolio / Work</h1><div class="crumb">${projects.length} project(s) · shown in the "Crafted with Precision" section</div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.portfolio">Portfolio / Work</h1><div class="crumb">${projects.length} project(s) · shown in the "Crafted with Precision" section</div></div>
     <div style="margin-left:auto"><button class="btn" id="exportProjs"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-briefcase"></i> Add / Edit Project</h2>
@@ -2220,7 +2500,7 @@ function wireProjForm(){
 function ownerSkills(){
   const skills = State.skills.length?State.skills:[];
   return `
-  <div class="panel-top"><div><h1>Skills</h1><div class="crumb">${skills.length} skill(s) · shown in the "Skills in Orbit" section</div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.skills">Skills</h1><div class="crumb">${skills.length} skill(s) · shown in the "Skills in Orbit" section</div></div>
     <div style="margin-left:auto"><button class="btn" id="exportSkills"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-chart-line"></i> Add / Edit Skill</h2>
@@ -2281,7 +2561,7 @@ function wireSkillForm(){
 function ownerCreds(){
   const o=State._owner||{user:State.settings.adminUser};
   return `
-  <div class="panel-top"><div><h1>Owner Credentials</h1><div class="crumb">Changes apply on next login</div></div></div>
+  <div class="panel-top"><div><h1 data-i18n="owner.creds">Owner Credentials</h1><div class="crumb">Changes apply on next login</div></div></div>
   <div class="panel-card glass">
     <form id="credForm">
       <div class="field"><label>New Username</label><input name="user" value="${esc(o.user||'')}" required></div>
@@ -2476,9 +2756,9 @@ function renderLangList(filter){
   const basic=list.filter(l=>l.group==="basic");
   const all=list.filter(l=>l.group==="all");
   let html="";
-  if(basic.length) html+=`<div class="lang-group-title">Basic</div><div class="lang-grid">${basic.map(l=>langItemHtml(l,l.code===cur)).join("")}</div>`;
-  if(all.length) html+=`<div class="lang-group-title">All Languages</div><div class="lang-grid">${all.map(l=>langItemHtml(l,l.code===cur)).join("")}</div>`;
-  if(!list.length) html='<div class="empty">No languages found.</div>';
+  if(basic.length) html+=`<div class="lang-group-title">${t("lang.basic")}</div><div class="lang-grid">${basic.map(l=>langItemHtml(l,l.code===cur)).join("")}</div>`;
+  if(all.length) html+=`<div class="lang-group-title">${t("lang.all")}</div><div class="lang-grid">${all.map(l=>langItemHtml(l,l.code===cur)).join("")}</div>`;
+  if(!list.length) html=`<div class="empty">${t("lang.none")}</div>`;
   wrap.innerHTML=html;
   $$(".lang-item",wrap).forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.lang)));
 }
@@ -2486,16 +2766,42 @@ function setLang(code){
   const l=LANGUAGES.find(x=>x.code===code); if(!l) return;
   localStorage.setItem("sarib_lang",code);
   document.documentElement.setAttribute("lang",code);
+  applyLang();
   renderLangList($("#langSearch")?.value||"");
+  // re-render dynamic public sections + any open panel so their text updates too
+  renderWork(); renderSkills(); renderServices();
+  if($("#userPanel").classList.contains("open")){ const v=$("#userNav .active")?.dataset.view; if(v) setUserView(v); }
+  if($("#ownerPanel").classList.contains("open")){ const v=$("#ownerNav .active")?.dataset.view; if(v) setOwnerView(v); }
   toast("Language set to "+l.en+".","ok");
 }
 function openLangModal(){
-  renderLangList($("#langSearch")?.value||"");
+  const s=$("#langSearch"); if(s) s.placeholder=t("lang.search");
+  renderLangList(s?.value||"");
+  applyLang();
   openModal("langOverlay");
+}
+function t(key){
+  const code=document.documentElement.getAttribute("lang")||"en";
+  if(I18N[code] && I18N[code][key]!=null) return I18N[code][key];
+  if(I18N.en[key]!=null) return I18N.en[key];
+  return key;
+}
+/* Translate every [data-i18n] element. Elements that also contain an icon should
+   wrap their label text in <span data-i18n-text>…</span>; applyLang only updates that span. */
+function applyLang(){
+  const code=document.documentElement.getAttribute("lang")||"en";
+  document.documentElement.setAttribute("lang",code);
+  document.documentElement.setAttribute("dir", RTL_LANGS.includes(code)?"rtl":"ltr");
+  $$("[data-i18n]").forEach(el=>{
+    const key=el.getAttribute("data-i18n");
+    const span=el.querySelector("[data-i18n-text]");
+    if(span) span.textContent=t(key); else el.textContent=t(key);
+  });
 }
 function initLang(){
   const code=localStorage.getItem("sarib_lang")||"en";
   document.documentElement.setAttribute("lang",code);
+  applyLang();
 }
 function initTheme(){
   const saved=localStorage.getItem("sarib_theme")||"dark";
