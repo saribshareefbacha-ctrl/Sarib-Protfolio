@@ -1653,6 +1653,14 @@ function renderSocials(){
   const about=$("#aboutSocials"); if(about){ about.innerHTML = html; }
 }
 
+/* Resolve the background for a Work / "Crafted with Precision" card thumbnail.
+   Supports BOTH CSS gradients AND uploaded images (data: URLs / http URLs),
+   so the optional project image attachment always renders correctly. */
+function workThumbStyle(img){
+  img = img||"";
+  if(/^data:image\/|^https?:\/\//.test(img)) return "background-image:url('"+img+"');background-size:cover;background-position:center;";
+  return "background:"+img+";";
+}
 function renderWork(){
   const g = $("#workGrid"); g.innerHTML="";
   const list = State.projects.length? State.projects : PROJECTS;
@@ -1662,7 +1670,7 @@ function renderWork(){
     card.innerHTML = `
       <div class="flip-inner">
         <div class="flip-face flip-front">
-          <div class="thumb" style="background:${p.img}"></div>
+          <div class="thumb" style="${workThumbStyle(p.img)}"></div>
           <span class="cat">${esc(p.cat)}</span>
           <h3>${esc(p.t)}</h3>
         </div>
@@ -2518,15 +2526,26 @@ function editProject(id){
   $("#projId").value=id; const f=$("#projForm");
   f.t.value=p.t||""; f.cat.value=p.cat||""; f.img.value=p.img||""; f.demo.value=p.demo||""; f.case.value=p.case||""; f.stack.value=(p.stack||[]).join(", ");
   State._projMedia = (p.img && /^(https?:|data:)/.test(p.img)) ? p.img : null;
-  $("#projMediaList").innerHTML = State._projMedia ? `<div><i class="fa-solid fa-paperclip"></i> image attached</div>` : "";
+  renderProjMediaPreview();
   $("#projSubmit").textContent="Update Project"; $("#projCancel").style.display="";
   toast("Editing: "+p.t,"info");
 }
-function resetProjForm(){ const f=$("#projForm"); if(f) f.reset(); const pid=$("#projId"); if(pid) pid.value=""; const ps=$("#projSubmit"); if(ps) ps.textContent="Add Project"; const pc=$("#projCancel"); if(pc) pc.style.display="none"; State._projMedia=null; const ml=$("#projMediaList"); if(ml) ml.innerHTML=""; }
+function resetProjForm(){ const f=$("#projForm"); if(f) f.reset(); const pid=$("#projId"); if(pid) pid.value=""; const ps=$("#projSubmit"); if(ps) ps.textContent="Add Project"; const pc=$("#projCancel"); if(pc) pc.style.display="none"; State._projMedia=null; renderProjMediaPreview(); }
+/* Show a live thumbnail of the attached (optional) project image in the owner panel,
+   with a remove button. Falls back to empty when no image is attached. */
+function renderProjMediaPreview(){
+  const list=$("#projMediaList"); if(!list) return;
+  if(!State._projMedia){ list.innerHTML=""; return; }
+  list.innerHTML = `<div style="position:relative;display:inline-block;margin-top:6px">
+    <img src="${State._projMedia}" alt="" style="height:92px;max-width:200px;border-radius:12px;border:1px solid var(--glass-border);object-fit:cover;display:block">
+    <button type="button" id="projMediaRemove" title="Remove image" style="position:absolute;top:-9px;right:-9px;width:26px;height:26px;border-radius:50%;background:var(--bad);color:#fff;display:grid;place-items:center;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
+  </div>`;
+  $("#projMediaRemove").addEventListener("click",()=>{ State._projMedia=null; const im=$("#projForm [name=img]"); if(im) im.value=""; renderProjMediaPreview(); });
+}
 function wireProjForm(){
   const drop=$("#projDrop"), inp=$("#projMedia");
   drop?.addEventListener("click",()=>inp.click());
-  inp?.addEventListener("change",()=>{ const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ State._projMedia=r.result; $("#projMediaList").innerHTML=`<div><i class="fa-solid fa-paperclip"></i> ${esc(f.name)}</div>`; }; r.readAsDataURL(f); });
+  inp?.addEventListener("change",()=>{ const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ State._projMedia=r.result; renderProjMediaPreview(); }; r.readAsDataURL(f); });
   $("#projCancel")?.addEventListener("click",resetProjForm);
   $("#projForm")?.addEventListener("submit",async e=>{
     e.preventDefault(); const f=e.target; const t=f.t.value.trim(); const cat=f.cat.value.trim();
