@@ -289,6 +289,10 @@ footer{padding:40px 0;text-align:center;color:var(--muted);border-top:1px solid 
 .field input,.field textarea,.field select{width:100%;padding:13px 16px;border-radius:14px;color:var(--txt);
   background:var(--glass-1);border:1px solid var(--glass-border);outline:none;transition:.2s}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--electric);box-shadow:0 0 0 3px rgba(74,124,247,.25)}
+.pwd-wrap{position:relative}
+.pwd-wrap input{padding-right:46px}
+.pwd-toggle{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.05rem;padding:6px;line-height:1;transition:.2s;z-index:2}
+.pwd-toggle:hover{color:var(--electric)}
 .field textarea{resize:vertical;min-height:90px}
 .field .err{color:var(--bad);font-size:.78rem;margin-top:5px;display:none}
 .field.invalid .err{display:block}
@@ -694,9 +698,9 @@ tbody tr:hover{background:var(--glass-1)}
     <h2>Welcome Back</h2>
     <p class="sub">Log in to access your dashboard.</p>
     <div class="form-msg" id="loginMsg"></div>
-    <form id="loginForm" novalidate>
-      <div class="field"><label>Email or Username</label><input type="text" name="email" placeholder="you@email.com or sarib" required><span class="err">Required.</span></div>
-      <div class="field"><label>Password</label><input type="password" name="password" placeholder="••••••••" required><span class="err">Password is required.</span></div>
+    <form id="loginForm" novalidate autocomplete="off">
+      <div class="field"><label>Email or Username</label><input type="text" name="email" required><span class="err">Required.</span></div>
+      <div class="field"><label>Password</label><div class="pwd-wrap"><input type="password" name="password" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err">Password is required.</span></div>
       <button type="submit" class="btn" style="width:100%">Log In <i class="fa-solid fa-arrow-right"></i></button>
     </form>
     <div class="divider-or">or continue with</div>
@@ -713,12 +717,12 @@ tbody tr:hover{background:var(--glass-1)}
     <h2>Create Account</h2>
     <p class="sub">Join to manage orders and projects.</p>
     <div class="form-msg" id="signupMsg"></div>
-    <form id="signupForm" novalidate>
-      <div class="field"><label>Full Name</label><input name="name" placeholder="John Doe" required><span class="err">Name is required.</span></div>
-      <div class="field"><label>Username</label><input name="username" placeholder="johndoe" required><span class="err">Username is required (letters/numbers).</span></div>
-      <div class="field"><label>Email</label><input type="email" name="email" placeholder="you@email.com" required><span class="err">Enter a valid email.</span></div>
-      <div class="field"><label>Phone</label><input name="phone" placeholder="03001234567" required><span class="err">Phone is required.</span></div>
-      <div class="field"><label>Password</label><input type="password" name="password" placeholder="Min 6 characters" required><span class="err">Min 6 characters.</span></div>
+    <form id="signupForm" novalidate autocomplete="off">
+      <div class="field"><label>Full Name</label><input name="name" required><span class="err">Name is required.</span></div>
+      <div class="field"><label>Username</label><input name="username" required><span class="err">Username is required (letters/numbers).</span></div>
+      <div class="field"><label>Email</label><input type="email" name="email" required><span class="err">Enter a valid email.</span></div>
+      <div class="field"><label>Phone</label><input name="phone" required><span class="err">Phone is required.</span></div>
+      <div class="field"><label>Password</label><div class="pwd-wrap"><input type="password" name="password" autocomplete="new-password" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err">Min 6 characters.</span></div>
       <button type="submit" class="btn" style="width:100%">Sign Up <i class="fa-solid fa-user-plus"></i></button>
     </form>
     <div class="divider-or">or</div>
@@ -982,6 +986,7 @@ function renderServices(){ const grid=$("#servicesGrid"); if(!grid) return; cons
       <div class="service-body"><h3>${esc(c.name)}</h3><div class="price">${price}</div>${c.desc?`<p>${esc(c.desc)}</p>`:""}<button class="btn ghost" data-order="${esc(c.name)}">Order Now</button></div>
     </div>`; }).join("");
   $$("[data-order]",grid).forEach(b=>b.addEventListener("click",()=>{ State._preCat=b.dataset.order; if(!State.currentUser){ openModal("loginOverlay"); toast("Log in to place an order.","info"); } else openOrderModal(); }));
+  initReveal();
 }
 
 /* ============================================================================
@@ -1243,6 +1248,7 @@ function renderWork(){
       </div>`;
     g.appendChild(card);
   });
+  initReveal();
 }
 
 function renderSkills(){
@@ -1268,6 +1274,7 @@ function renderSkills(){
       <div class="pct">${s.lv}%</div>`;
     list.appendChild(row);
   });
+  initReveal();
 }
 
 /* ============================================================================
@@ -1408,6 +1415,7 @@ function setUserView(view){
   else if(view==="u-hire") main.innerHTML = userHire();
   else if(view==="u-settings") main.innerHTML = userSettings(u);
   wireUserView(view);
+  wirePasswordToggles();
   main.scrollTop=0;
 }
 function userHome(u){
@@ -1465,10 +1473,10 @@ function userProfile(u){
   <div class="panel-card glass">
     <h2><i class="fa-solid fa-lock"></i> Change Password</h2>
     <form id="passForm">
-      <div class="field"><label>Current Password</label><input type="password" name="cur" required></div>
+      <div class="field"><label>Current Password</label><div class="pwd-wrap"><input type="password" name="cur" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
       <div class="toolbar">
-        <div class="field" style="flex:1;margin:0"><label>New Password</label><input type="password" name="nw" required></div>
-        <div class="field" style="flex:1;margin:0"><label>Confirm</label><input type="password" name="cf" required></div>
+        <div class="field" style="flex:1;margin:0"><label>New Password</label><div class="pwd-wrap"><input type="password" name="nw" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
+        <div class="field" style="flex:1;margin:0"><label>Confirm</label><div class="pwd-wrap"><input type="password" name="cf" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
       </div>
       <button class="btn" type="submit"><i class="fa-solid fa-key"></i> Update Password</button>
     </form>
@@ -1657,7 +1665,7 @@ function setOwnerView(view){
   else if(view==="o-users") main.innerHTML=ownerUsers();
   else if(view==="o-cats") main.innerHTML=ownerProducts();
   else if(view==="o-creds") main.innerHTML=ownerCreds();
-  wireOwnerView(view); main.scrollTop=0;
+  wireOwnerView(view); wirePasswordToggles(); main.scrollTop=0;
 }
 function ownerHome(){
   const users=State.users, orders=State.orders;
@@ -1941,10 +1949,10 @@ function ownerCreds(){
   <div class="panel-card glass">
     <form id="credForm">
       <div class="field"><label>New Username</label><input name="user" value="${esc(o.user||'')}" required></div>
-      <div class="field"><label>Current Password</label><input type="password" name="cur" placeholder="••••••••" required></div>
+      <div class="field"><label>Current Password</label><div class="pwd-wrap"><input type="password" name="cur" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
       <div class="toolbar">
-        <div class="field" style="flex:1;margin:0"><label>New Password</label><input type="password" name="nw" required></div>
-        <div class="field" style="flex:1;margin:0"><label>Confirm Password</label><input type="password" name="cf" required></div>
+        <div class="field" style="flex:1;margin:0"><label>New Password</label><div class="pwd-wrap"><input type="password" name="nw" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
+        <div class="field" style="flex:1;margin:0"><label>Confirm Password</label><div class="pwd-wrap"><input type="password" name="cf" required><button type="button" class="pwd-toggle" tabindex="-1" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
       </div>
       <button class="btn" type="submit"><i class="fa-solid fa-key"></i> Update Credentials</button>
     </form>
@@ -2037,9 +2045,21 @@ function initCounters(){
   const io2=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ const i=e.target.querySelector("i"); if(i) i.style.width=i.dataset.w+"%"; io2.unobserve(e.target); } }); },{threshold:.3});
   $$(".skill-row").forEach(r=>io2.observe(r));
 }
+let _revealIO=null;
 function initReveal(){
-  const io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }); },{threshold:.12});
-  $$(".reveal").forEach(el=>io.observe(el));
+  if(!_revealIO){ _revealIO=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); _revealIO.unobserve(e.target); } }); },{threshold:.12}); }
+  $$(".reveal:not(.in)").forEach(el=>_revealIO.observe(el));
+}
+function wirePasswordToggles(root=document){
+  $$(".pwd-toggle:not([data-wired])",root).forEach(btn=>{
+    btn.setAttribute("data-wired","1");
+    btn.addEventListener("click",()=>{
+      const inp=btn.parentElement.querySelector("input"); if(!inp) return;
+      const show=inp.type==="password";
+      inp.type=show?"text":"password";
+      const ic=btn.querySelector("i"); if(ic) ic.className=show?"fa-solid fa-eye-slash":"fa-solid fa-eye";
+    });
+  });
 }
 function initParallax(){
   const items=$$("[data-parallax]"); let tx=0,ty=0;
@@ -2104,8 +2124,8 @@ function initCurrency(){
    ========================================================================== */
 async function boot(){
   $("#year").textContent=new Date().getFullYear();
-  initTheme(); initNav(); initParticles(); initTyping(); initCounters(); initReveal(); initParallax(); initTilt(); initOrbitInteract();
-  bindModals(); wireOrderModal();
+  initTheme(); initNav(); initParticles(); initTyping(); initReveal(); initParallax(); initTilt(); initOrbitInteract();
+  bindModals(); wireOrderModal(); wirePasswordToggles();
   // forms
   $("#signupForm").addEventListener("submit",handleSignup);
   $("#loginForm").addEventListener("submit",handleLogin);
@@ -2123,7 +2143,11 @@ async function boot(){
   // restore session on reload (Firebase auth)
   Backend.onAuth(async fbUser=>{
     if(fbUser){
-      if(fbUser.email && fbUser.email.toLowerCase()===OWNER_GOOGLE_EMAIL.toLowerCase()){ State.owner={user:State.settings.adminUser||"sarib"}; onOwnerLogin(); return; }
+      if(fbUser.email && fbUser.email.toLowerCase()===OWNER_GOOGLE_EMAIL.toLowerCase()){
+        // Active owner Google sign-in is routed in handleGoogle().
+        // Do NOT auto-open the Owner Panel on page refresh / session restore.
+        return;
+      }
       const users=await Backend.getUsers(); const me=users.find(x=>x.id===fbUser.uid);
       if(me){ if(me.status==="blocked"){ await Backend.logout(); State.currentUser=null; onUserLogout(); toast("This account is blocked.","err"); }
         else { State.currentUser=me; onUserLoginSilent(); } }
@@ -2139,6 +2163,7 @@ async function boot(){
   try{ State._owner = await Backend.getOwner(); }catch(e){ State._owner={user:DEFAULT_SETTINGS.adminUser}; }
   applySettings(State.settings);
   initCurrency(); renderWork(); renderSkills(); renderServices();
+  initCounters();
 
   // firestore onSnapshot / demo bus listeners
   Backend.watchSettings(s=>{ State.settings=s; applySettings(s); rtPill("Site content updated"); });
