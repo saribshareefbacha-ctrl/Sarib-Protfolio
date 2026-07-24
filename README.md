@@ -14,11 +14,12 @@ authentication and real‑time data sync.
 - **User Panel** — Overview, editable Profile (avatar/info/change password), My Orders table with
   live status, Place‑Order modal (category grid + auto ID + drag‑drop files), Hire‑Me form,
   Settings (delete account / logout).
-- **Owner Panel** — Dashboard stats, Site Settings (live edits to site text, **owner profile image**, **site logo / favicon**, and **social profile links**), Order
-  Management (search/filter/status/update/delete/notify), User Management
+- **Owner Panel** — Dashboard stats, Site Settings (live edits to site text, **owner profile image**, **site logo / favicon**, **social profile links**, and the
+  **three main section headings** — eyebrow / title / gradient-accent word / subtitle for **Work ("Crafted with Precision")**, **Skills ("Skills in Orbit")** and **Services ("What I Offer")**),
+  Order Management (search/filter/status/update/delete/notify), User Management
   (block/unblock/delete/email/export CSV), **Products & Pricing** (owner-managed services with
   USD prices, optional image/video sample upload OR auto "use custom template" visual per
-  service), Owner Credentials.
+  service), **Portfolio** (owner-managed Work projects — title, category, image/gradient, demo & case URLs, stack; renders the 3D flip-card grid), **Skills** (owner-managed skills — name, category, Font Awesome icon, level %; feeds the orbital sphere and bars), Owner Credentials.
 - **Public Services section** — every owner-defined product is shown on the landing page with its
   price, converted live across multiple currencies (default **USD**), and a "Order Now" button.
 - **Real‑time sync** — Owner changes (profile, categories, order status, blocking) instantly
@@ -44,6 +45,8 @@ users/{userId}        → { name, username, email, phone, status, avatar, create
 orders/{orderId}      → { orderId, customer, username, email, phone, category, description, attachments[], status, date, userId, createdAt, updatedAt }
 categories/{catId}    → { name, price, desc, kw, useTemplate, media, mediaType, createdAt }
                         (price is stored in USD; media is a data-URL when uploaded via the panel)
+projects/{projId}      → { t, cat, img, demo, case, stack[], createdAt }   (the "Crafted with Precision" portfolio grid)
+skills/{skillId}       → { n, c, i, lv, createdAt }                        (n=name, c=category, i=Font Awesome icon class, lv=level 0-100)
 ```
 
 > **Important — security model.** In this build the **Owner is NOT a Firebase Auth user**

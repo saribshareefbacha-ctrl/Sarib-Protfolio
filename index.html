@@ -248,7 +248,7 @@ section{padding:clamp(60px,9vw,120px) 0;position:relative}
 .skill-row .body{flex:1}
 .skill-row .name{font-weight:700;font-size:.95rem}
 .skill-row .bar{height:7px;border-radius:6px;background:var(--glass-1);margin-top:8px;overflow:hidden}
-.skill-row .bar i{display:block;height:100%;width:0;border-radius:6px;background:var(--grad);transition:width 1.2s ease}
+.skill-row .bar i{display:block;height:100%;width:0;border-radius:6px;background:var(--grad);transition:width .8s ease}
 .skill-row .pct{font-size:.8rem;color:var(--muted);font-weight:700;min-width:42px;text-align:right}
 
 /* ============================================================
@@ -400,8 +400,8 @@ tbody tr:hover{background:var(--glass-1)}
 .toast i{margin-top:3px}
 .toast.ok i{color:var(--ok)} .toast.err i{color:var(--bad)} .toast.info i{color:var(--electric)}
 
-/* reveal on scroll */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s}
+/* reveal on scroll — kept snappy so sections/products never feel slow */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease}
 .reveal.in{opacity:1;transform:none}
 
 /* ============================================================
@@ -572,9 +572,9 @@ tbody tr:hover{background:var(--glass-1)}
 <section id="work">
   <div class="wrap">
     <div class="center reveal">
-      <span class="eyebrow">Selected Work</span>
-      <h2 class="section-title">Crafted with <span class="grad-text">Precision</span></h2>
-      <p class="section-sub">A curated collection of brand identities, 3D experiences, and full-stack products built for clients worldwide.</p>
+      <span class="eyebrow" id="workEyebrow">Selected Work</span>
+      <h2 class="section-title" id="workTitle">Crafted with <span class="grad-text">Precision</span></h2>
+      <p class="section-sub" id="workSub">A curated collection of brand identities, 3D experiences, and full-stack products built for clients worldwide.</p>
     </div>
     <div class="work-grid" id="workGrid"><!-- rendered by JS --></div>
   </div>
@@ -584,9 +584,9 @@ tbody tr:hover{background:var(--glass-1)}
 <section id="skills">
   <div class="wrap">
     <div class="center reveal">
-      <span class="eyebrow">Capabilities</span>
-      <h2 class="section-title">Skills in <span class="grad-text">Orbit</span></h2>
-      <p class="section-sub">Creative, technical, and professional disciplines — hover a node to explore.</p>
+      <span class="eyebrow" id="skillsEyebrow">Capabilities</span>
+      <h2 class="section-title" id="skillsTitle">Skills in <span class="grad-text">Orbit</span></h2>
+      <p class="section-sub" id="skillsSub">Creative, technical, and professional disciplines — hover a node to explore.</p>
     </div>
     <div class="skills-wrap reveal">
       <div class="orbit-stage" id="orbitStage">
@@ -601,9 +601,9 @@ tbody tr:hover{background:var(--glass-1)}
 <section id="services">
   <div class="wrap">
     <div class="center reveal">
-      <span class="eyebrow">Services &amp; Pricing</span>
-      <h2 class="section-title">What I <span class="grad-text">Offer</span></h2>
-      <p class="section-sub">Transparent pricing per service. Order in seconds — switch currency anytime (default USD).</p>
+      <span class="eyebrow" id="servicesEyebrow">Services &amp; Pricing</span>
+      <h2 class="section-title" id="servicesTitle">What I <span class="grad-text">Offer</span></h2>
+      <p class="section-sub" id="servicesSub">Transparent pricing per service. Order in seconds — switch currency anytime (default USD).</p>
     </div>
     <div style="display:flex;justify-content:flex-end;margin:6px 0 0">
       <label class="currency-sel">Currency
@@ -823,6 +823,8 @@ tbody tr:hover{background:var(--glass-1)}
         <button data-view="o-orders"><i class="fa-solid fa-bag-shopping"></i> Orders</button>
         <button data-view="o-users"><i class="fa-solid fa-users"></i> Users</button>
         <button data-view="o-cats"><i class="fa-solid fa-layer-group"></i> Products</button>
+        <button data-view="o-work"><i class="fa-solid fa-briefcase"></i> Portfolio</button>
+        <button data-view="o-skills"><i class="fa-solid fa-chart-line"></i> Skills</button>
         <button data-view="o-creds"><i class="fa-solid fa-key"></i> Credentials</button>
       </nav>
       <div class="side-foot">
@@ -875,7 +877,12 @@ const DEFAULT_SETTINGS = {
     {key:"github",url:""},{key:"linkedin",url:""},{key:"youtube",url:""},
     {key:"instagram",url:""},{key:"tiktok",url:""},{key:"twitter",url:""},
     {key:"facebook",url:""},{key:"whatsapp",url:""}
-  ]
+  ],
+  sections: {            // editable section headings (title + the gradient-accent word)
+    work:{eyebrow:"Selected Work", title:"Crafted with", accent:"Precision", sub:"A curated collection of brand identities, 3D experiences, and full-stack products built for clients worldwide."},
+    skills:{eyebrow:"Capabilities", title:"Skills in", accent:"Orbit", sub:"Creative, technical, and professional disciplines — hover a node to explore."},
+    services:{eyebrow:"Services & Pricing", title:"What I", accent:"Offer", sub:"Transparent pricing per service. Order in seconds — switch currency anytime (default USD)."}
+  }
 };
 const OWNER_GOOGLE_EMAIL = "saribshareefbacha@gmail.com";
 const DEFAULT_CATEGORIES = [
@@ -981,12 +988,13 @@ function templateHtml(c){ const kw=detectKw(c.kw||c.name); const t=TEMPLATES.fin
 function productMediaHtml(c){ if(c.useTemplate || !c.media) return templateHtml(c); if(c.mediaType==="video") return `<video src="${c.media}" autoplay muted loop playsinline></video>`; return `<img src="${c.media}" alt="${esc(c.name)}">`; }
 function renderServices(){ const grid=$("#servicesGrid"); if(!grid) return; const cur=State.currency||"USD"; const list=State.cats.length?State.cats:DEFAULT_PRODUCTS;
   grid.innerHTML = list.map((c,i)=>{ const price=(c.price!=null)?formatPrice(c.price,cur):"Contact"; const media=productMediaHtml(c);
-    return `<div class="service-card glass reveal" style="transition-delay:${i*60}ms">
+    return `<div class="service-card glass reveal" style="transition-delay:${i*40}ms">
       <div class="service-media">${media}</div>
       <div class="service-body"><h3>${esc(c.name)}</h3><div class="price">${price}</div>${c.desc?`<p>${esc(c.desc)}</p>`:""}<button class="btn ghost" data-order="${esc(c.name)}">Order Now</button></div>
     </div>`; }).join("");
   $$("[data-order]",grid).forEach(b=>b.addEventListener("click",()=>{ State._preCat=b.dataset.order; if(!State.currentUser){ openModal("loginOverlay"); toast("Log in to place an order.","info"); } else openOrderModal(); }));
   initReveal();
+  revealVisible(grid);
 }
 
 /* ============================================================================
@@ -1019,12 +1027,14 @@ const bus = (()=>{ const m={}; return {
    BACKEND — Demo (localStorage) + Firebase (when configured)
    ========================================================================== */
 const Demo = (()=>{
-  const K = { s:"sarib_settings", u:"sarib_users", o:"sarib_orders", c:"sarib_cats", ow:"sarib_owner", sess:"sarib_session" };
+  const K = { s:"sarib_settings", u:"sarib_users", o:"sarib_orders", c:"sarib_cats", p:"sarib_projects", sk:"sarib_skills", ow:"sarib_owner", sess:"sarib_session" };
   const read = k => { try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } };
   const write = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
   function seed(){
     if(!read(K.s)) write(K.s, {...DEFAULT_SETTINGS, createdAt:Date.now(), updatedAt:Date.now()});
     if(!read(K.c)) write(K.c, DEFAULT_PRODUCTS.map(p=>({id:uid(),...p})));
+    if(!read(K.p)) write(K.p, PROJECTS.map(p=>({id:uid(),...p})));
+    if(!read(K.sk)) write(K.sk, SKILLS.map(s=>({id:uid(),...s})));
     if(!read(K.u)) write(K.u, []);
     if(!read(K.o)) write(K.o, []);
     if(!read(K.ow)) write(K.ow, {user:DEFAULT_SETTINGS.adminUser, pass:DEFAULT_SETTINGS.adminPass});
@@ -1039,6 +1049,16 @@ const Demo = (()=>{
     updateCat:(id,patch)=>{ let arr=read(K.c)||[]; arr=arr.map(x=>x.id===id?{...x,...patch,updatedAt:Date.now()}:x); write(K.c,arr); bus.emit("cats",arr); return arr.find(x=>x.id===id); },
     delCat:(id)=>{ const c=(read(K.c)||[]).filter(x=>x.id!==id); write(K.c,c); bus.emit("cats",c); },
     watchCats:(cb)=>bus.on("cats",cb),
+    getProjects:()=>read(K.p)||[],
+    addProject:(p)=>{ const arr=read(K.p)||[]; const item={id:uid(),...p}; arr.push(item); write(K.p,arr); bus.emit("projects",arr); return item; },
+    updateProject:(id,patch)=>{ let arr=read(K.p)||[]; arr=arr.map(x=>x.id===id?{...x,...patch}:x); write(K.p,arr); bus.emit("projects",arr); return arr.find(x=>x.id===id); },
+    delProject:(id)=>{ const c=(read(K.p)||[]).filter(x=>x.id!==id); write(K.p,c); bus.emit("projects",c); },
+    watchProjects:(cb)=>bus.on("projects",cb),
+    getSkills:()=>read(K.sk)||[],
+    addSkill:(s)=>{ const arr=read(K.sk)||[]; const item={id:uid(),...s}; arr.push(item); write(K.sk,arr); bus.emit("skills",arr); return item; },
+    updateSkill:(id,patch)=>{ let arr=read(K.sk)||[]; arr=arr.map(x=>x.id===id?{...x,...patch}:x); write(K.sk,arr); bus.emit("skills",arr); return arr.find(x=>x.id===id); },
+    delSkill:(id)=>{ const c=(read(K.sk)||[]).filter(x=>x.id!==id); write(K.sk,c); bus.emit("skills",c); },
+    watchSkills:(cb)=>bus.on("skills",cb),
     getOrders:()=>read(K.o)||[],
     addOrder:(o)=>{ const arr=read(K.o)||[]; const item={...o,id:uid(),createdAt:Date.now(),updatedAt:Date.now()}; arr.unshift(item); write(K.o,arr); bus.emit("orders",arr); return item; },
     updateOrder:(id,patch)=>{ let arr=read(K.o)||[]; arr=arr.map(x=>x.id===id?{...x,...patch,updatedAt:Date.now()}:x); write(K.o,arr); bus.emit("orders",arr); return arr.find(x=>x.id===id); },
@@ -1068,6 +1088,8 @@ const Fb = (()=>{
   }
   const settingsRef = ()=> db.collection("settings").doc("owner");
   const catsRef = ()=> db.collection("categories");
+  const projectsRef = ()=> db.collection("projects");
+  const skillsRef = ()=> db.collection("skills");
   const ordersRef = ()=> db.collection("orders");
   const usersRef = ()=> db.collection("users");
   return {
@@ -1096,6 +1118,18 @@ const Fb = (()=>{
       else { const s=d.data(); if(s.adminUser===OLD_U || !s.adminUser || s.adminPass===OLD_P || !s.adminPass){ await settingsRef().update({adminUser:DEFAULT_SETTINGS.adminUser,adminPass:DEFAULT_SETTINGS.adminPass,updatedAt:Date.now()}); } } },
     getCats:async()=>{ const s=await catsRef().get(); return s.docs.map(d=>({id:d.id,...d.data()})); },
     ensureCategories:async()=>{ const s=await catsRef().get(); if(s.empty){ const b=db.batch(); DEFAULT_PRODUCTS.forEach(p=>{ b.set(catsRef().doc(),{...p,createdAt:Date.now()}); }); await b.commit(); } },
+    getProjects:async()=>{ const s=await projectsRef().get(); return s.docs.map(d=>({id:d.id,...d.data()})); },
+    ensureProjects:async()=>{ const s=await projectsRef().get(); if(s.empty){ const b=db.batch(); PROJECTS.forEach(p=>{ b.set(projectsRef().doc(),{...p,createdAt:Date.now()}); }); await b.commit(); } },
+    watchProjects:(cb)=> projectsRef().onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()})))) ,
+    addProject:async(p)=>{ const r=await projectsRef().add({...p,createdAt:Date.now()}); return {id:r.id,...p}; },
+    updateProject:async(id,patch)=>{ await projectsRef().doc(id).update(patch); },
+    delProject:async(id)=>{ await projectsRef().doc(id).delete(); },
+    getSkills:async()=>{ const s=await skillsRef().get(); return s.docs.map(d=>({id:d.id,...d.data()})); },
+    ensureSkills:async()=>{ const s=await skillsRef().get(); if(s.empty){ const b=db.batch(); SKILLS.forEach(sk=>{ b.set(skillsRef().doc(),{...sk,createdAt:Date.now()}); }); await b.commit(); } },
+    watchSkills:(cb)=> skillsRef().onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()})))) ,
+    addSkill:async(s)=>{ const r=await skillsRef().add({...s,createdAt:Date.now()}); return {id:r.id,...s}; },
+    updateSkill:async(id,patch)=>{ await skillsRef().doc(id).update(patch); },
+    delSkill:async(id)=>{ await skillsRef().doc(id).delete(); },
     watchCats:(cb)=> catsRef().onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()})))) ,
     addCat:async(c)=>{ const r=await catsRef().add({...c,createdAt:Date.now()}); return {id:r.id,...c}; },
     updateCat:async(id,patch)=>{ await catsRef().doc(id).update(patch); },
@@ -1154,6 +1188,18 @@ const Backend = (()=>{
     addCat:(n)=> isFb()? Fb.addCat(n) : Promise.resolve(Demo.addCat(n)),
     updateCat:(id,p)=> isFb()? Fb.updateCat(id,p) : Promise.resolve(Demo.updateCat(id,p)),
     delCat:(id)=> isFb()? Fb.delCat(id) : Promise.resolve(Demo.delCat(id)),
+    ensureProjects:()=> isFb()? Fb.ensureProjects() : Promise.resolve(),
+    getProjects:()=> isFb()? Fb.getProjects() : Promise.resolve(Demo.getProjects()),
+    watchProjects:(cb)=> isFb()? Fb.watchProjects(cb) : Demo.watchProjects(cb),
+    addProject:(n)=> isFb()? Fb.addProject(n) : Promise.resolve(Demo.addProject(n)),
+    updateProject:(id,p)=> isFb()? Fb.updateProject(id,p) : Promise.resolve(Demo.updateProject(id,p)),
+    delProject:(id)=> isFb()? Fb.delProject(id) : Promise.resolve(Demo.delProject(id)),
+    ensureSkills:()=> isFb()? Fb.ensureSkills() : Promise.resolve(),
+    getSkills:()=> isFb()? Fb.getSkills() : Promise.resolve(Demo.getSkills()),
+    watchSkills:(cb)=> isFb()? Fb.watchSkills(cb) : Demo.watchSkills(cb),
+    addSkill:(n)=> isFb()? Fb.addSkill(n) : Promise.resolve(Demo.addSkill(n)),
+    updateSkill:(id,p)=> isFb()? Fb.updateSkill(id,p) : Promise.resolve(Demo.updateSkill(id,p)),
+    delSkill:(id)=> isFb()? Fb.delSkill(id) : Promise.resolve(Demo.delSkill(id)),
     getOrders:()=> isFb()? Fb.getOrders() : Promise.resolve(Demo.getOrders()),
     watchOrders:(cb)=> isFb()? Fb.watchOrders(cb) : Demo.watchOrders(cb),
     addOrder:(o)=> isFb()? Fb.addOrder(o) : Promise.resolve(Demo.addOrder(o)),
@@ -1175,6 +1221,8 @@ const Backend = (()=>{
 const State = {
   settings: {...DEFAULT_SETTINGS},
   cats: [],
+  projects: [],
+  skills: [],
   orders: [],
   users: [],
   currentUser: null,
@@ -1210,6 +1258,18 @@ function applySettings(s){
   $("#contactMail").href = mailLink(s.email,"Project Inquiry","Hi "+s.name+",");
   document.title = s.name + " — " + (s.cast||"Creative Technologist");
   renderSocials();
+  applySections();
+}
+/* Editable section headings (eyebrow / title / gradient-accent word / subtitle) */
+function applySections(){
+  const s = State.settings.sections || {};
+  const set = (pre, obj)=>{
+    const e=document.getElementById(pre+"Eyebrow"); if(e) e.textContent = obj?.eyebrow||"";
+    const t=document.getElementById(pre+"Title");
+    if(t) t.innerHTML = esc(obj?.title||"") + (obj?.accent? ` <span class="grad-text">${esc(obj.accent)}</span>`:"");
+    const sub=document.getElementById(pre+"Sub"); if(sub) sub.textContent = obj?.sub||"";
+  };
+  set("work", s.work); set("skills", s.skills); set("services", s.services);
 }
 
 function setLogoEl(el, img){
@@ -1226,9 +1286,10 @@ function renderSocials(){
 
 function renderWork(){
   const g = $("#workGrid"); g.innerHTML="";
-  PROJECTS.forEach((p,i)=>{
+  const list = State.projects.length? State.projects : PROJECTS;
+  list.forEach((p,i)=>{
     const card = el("div","flip-card reveal");
-    card.style.transitionDelay = (i*80)+"ms";
+    card.style.transitionDelay = (i*45)+"ms";
     card.innerHTML = `
       <div class="flip-inner">
         <div class="flip-face flip-front">
@@ -1239,9 +1300,9 @@ function renderWork(){
         <div class="flip-face flip-back">
           <h3>${esc(p.t)}</h3>
           <p>${esc(p.cat)} project with end-to-end delivery.</p>
-          <div class="pills">${p.stack.map(x=>`<span class="pill">${esc(x)}</span>`).join("")}</div>
+          <div class="pills">${(p.stack||[]).map(x=>`<span class="pill">${esc(x)}</span>`).join("")}</div>
           <div class="flip-actions">
-            <a href="${p.demo}" target="_blank" rel="noopener"><i class="fa-solid fa-eye"></i> Demo</a>
+            <a href="${p.demo||"#"}" target="_blank" rel="noopener"><i class="fa-solid fa-eye"></i> Demo</a>
             <a href="#contact"><i class="fa-solid fa-book-open"></i> Case Study</a>
           </div>
         </div>
@@ -1249,12 +1310,14 @@ function renderWork(){
     g.appendChild(card);
   });
   initReveal();
+  revealVisible(g);
 }
 
 function renderSkills(){
   const sphere = $("#sphere"); sphere.innerHTML="";
-  const N = SKILLS.length;
-  SKILLS.forEach((s,i)=>{
+  const list = State.skills.length? State.skills : SKILLS;
+  const N = list.length;
+  list.forEach((s,i)=>{
     const phi = Math.acos(-1 + (2*i)/N);
     const theta = Math.sqrt(N*Math.PI)*phi;
     const r = 150;
@@ -1265,16 +1328,17 @@ function renderSkills(){
     node.style.transform = `translate3d(${x}px,${y}px,${z}px)`;
     sphere.appendChild(node);
   });
-  const list = $("#skillsList"); list.innerHTML="";
-  SKILLS.forEach(s=>{
+  const sk = $("#skillsList"); sk.innerHTML="";
+  list.forEach(s=>{
     const row = el("div","skill-row glass-sm reveal");
     row.innerHTML = `<div class="ic"><i class="fa-solid ${s.i}"></i></div>
       <div class="body"><div class="name">${esc(s.n)} <span style="color:var(--muted);font-weight:500;font-size:.75rem">· ${s.c}</span></div>
       <div class="bar"><i data-w="${s.lv}"></i></div></div>
       <div class="pct">${s.lv}%</div>`;
-    list.appendChild(row);
+    sk.appendChild(row);
   });
   initReveal();
+  revealVisible(sk);
 }
 
 /* ============================================================================
@@ -1664,6 +1728,8 @@ function setOwnerView(view){
   else if(view==="o-orders") main.innerHTML=ownerOrders();
   else if(view==="o-users") main.innerHTML=ownerUsers();
   else if(view==="o-cats") main.innerHTML=ownerProducts();
+  else if(view==="o-work") main.innerHTML=ownerWork();
+  else if(view==="o-skills") main.innerHTML=ownerSkills();
   else if(view==="o-creds") main.innerHTML=ownerCreds();
   wireOwnerView(view); wirePasswordToggles(); main.scrollTop=0;
 }
@@ -1740,6 +1806,28 @@ function ownerProfile(){
     <div id="socialEditor"></div>
     <button class="btn ghost" type="button" id="addSocial"><i class="fa-solid fa-plus"></i> Add Social Link</button>
     <button class="btn" type="button" id="saveSocials" style="margin-left:10px"><i class="fa-solid fa-floppy-disk"></i> Save Social Links</button>
+  </div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-heading"></i> Section Headings</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:14px">Customize the eyebrow, title, the highlighted (gradient) word, and subtitle for the three main landing sections. Changes appear live on the public site.</p>
+    <form id="sectionsForm">
+      ${sectionFieldsHtml("work", s.sections?.work||DEFAULT_SETTINGS.sections.work)}
+      ${sectionFieldsHtml("skills", s.sections?.skills||DEFAULT_SETTINGS.sections.skills)}
+      ${sectionFieldsHtml("services", s.sections?.services||DEFAULT_SETTINGS.sections.services)}
+      <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Section Headings</button>
+    </form>
+  </div>`;
+}
+function sectionFieldsHtml(key,obj){
+  return `
+  <div style="border:1px solid var(--glass-border);border-radius:14px;padding:16px;margin-bottom:14px">
+    <div style="font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-hashtag" style="color:var(--electric)"></i> ${cap(key)} Section</div>
+    <div class="field" style="margin-bottom:10px"><label>Eyebrow (small label)</label><input name="${key}_eyebrow" value="${esc(obj.eyebrow||'')}"></div>
+    <div class="toolbar" style="margin-bottom:10px">
+      <div class="field" style="flex:1;margin:0"><label>Title (before highlighted word)</label><input name="${key}_title" value="${esc(obj.title||'')}"></div>
+      <div class="field" style="flex:1;margin:0"><label>Highlighted Word (gradient)</label><input name="${key}_accent" value="${esc(obj.accent||'')}"></div>
+    </div>
+    <div class="field" style="margin:0"><label>Subtitle</label><input name="${key}_sub" value="${esc(obj.sub||'')}"></div>
   </div>`;
 }
 function wireImageUpload(labelEl, inputEl, key){
@@ -1942,6 +2030,130 @@ function wireProdForm(){
     resetProdForm(); renderProducts();
   });
 }
+function ownerWork(){
+  const projects = State.projects.length?State.projects:[];
+  return `
+  <div class="panel-top"><div><h1>Portfolio / Work</h1><div class="crumb">${projects.length} project(s) · shown in the "Crafted with Precision" section</div></div>
+    <div style="margin-left:auto"><button class="btn" id="exportProjs"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-briefcase"></i> Add / Edit Project</h2>
+    <form id="projForm">
+      <input type="hidden" id="projId">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Project Title</label><input name="t" placeholder="e.g. Nebula Brand System" required></div>
+        <div class="field" style="flex:1;margin:0"><label>Category</label><input name="cat" placeholder="e.g. Branding" required></div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label>Image / Gradient (image URL or CSS gradient)</label><input name="img" placeholder="linear-gradient(135deg,#4a7cf7,#7c5cfc) or https://..."></div>
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Demo URL</label><input name="demo" placeholder="https://... (optional)"></div>
+        <div class="field" style="flex:1;margin:0"><label>Case Study URL</label><input name="case" placeholder="https://... (optional)"></div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label>Stack (comma-separated)</label><input name="stack" placeholder="Logo, Identity, 3D"></div>
+      <div class="toolbar" style="margin-top:6px">
+        <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> <span id="projSubmit">Add Project</span></button>
+        <button class="btn ghost" type="button" id="projCancel" style="display:none">Cancel Edit</button>
+      </div>
+    </form>
+  </div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-layer-group"></i> Projects List</h2>
+    <div class="chip-row" id="projChips">${projects.map(p=>projChip(p)).join("")}</div>
+    ${projects.length?'<div class="empty" style="padding:6px 0 0">Click the pen to edit · × to delete</div>':''}
+  </div>`;
+}
+function projChip(p){
+  return `<span class="chip">${esc(p.t)} <span style="color:var(--muted);font-weight:500;font-size:.75rem">· ${esc(p.cat)}</span>
+    <button data-editproj="${p.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
+    <button data-delproj="${p.id||''}" data-name="${esc(p.t)}" title="Delete"><i class="fa-solid fa-xmark"></i></button></span>`;
+}
+function renderOwnerWork(){
+  const wrap=$("#projChips"); if(!wrap) return;
+  const projects=State.projects.length?State.projects:[];
+  wrap.innerHTML=projects.map(p=>projChip(p)).join("");
+  $$("[data-editproj]",wrap).forEach(b=>b.addEventListener("click",()=>editProject(b.dataset.editproj)));
+  $$("[data-delproj]",wrap).forEach(b=>b.addEventListener("click",async()=>{ if(b.dataset.delproj){ await Backend.delProject(b.dataset.delproj); } else { toast("Seeded item can't be removed here.","info"); } renderOwnerWork(); }));
+}
+function editProject(id){
+  const p=State.projects.find(x=>x.id===id); if(!p) return;
+  $("#projId").value=id; const f=$("#projForm");
+  f.t.value=p.t||""; f.cat.value=p.cat||""; f.img.value=p.img||""; f.demo.value=p.demo||""; f.case.value=p.case||""; f.stack.value=(p.stack||[]).join(", ");
+  $("#projSubmit").textContent="Update Project"; $("#projCancel").style.display="";
+  toast("Editing: "+p.t,"info");
+}
+function resetProjForm(){ const f=$("#projForm"); if(f) f.reset(); const pid=$("#projId"); if(pid) pid.value=""; const ps=$("#projSubmit"); if(ps) ps.textContent="Add Project"; const pc=$("#projCancel"); if(pc) pc.style.display="none"; }
+function wireProjForm(){
+  $("#projCancel")?.addEventListener("click",resetProjForm);
+  $("#projForm")?.addEventListener("submit",async e=>{
+    e.preventDefault(); const f=e.target; const t=f.t.value.trim(); const cat=f.cat.value.trim();
+    if(!t||!cat){ toast("Title and category are required.","err"); return; }
+    const patch={ t, cat, img:f.img.value.trim()||"linear-gradient(135deg,#4a7cf7,#7c5cfc)", demo:f.demo.value.trim()||"#", case:f.case.value.trim(), stack:f.stack.value.split(",").map(s=>s.trim()).filter(Boolean) };
+    const id=$("#projId").value;
+    if(id){ await Backend.updateProject(id,patch); toast("Project updated.","ok"); }
+    else { await Backend.addProject(patch); toast("Project added.","ok"); }
+    resetProjForm(); renderOwnerWork(); renderWork();
+  });
+}
+function ownerSkills(){
+  const skills = State.skills.length?State.skills:[];
+  return `
+  <div class="panel-top"><div><h1>Skills</h1><div class="crumb">${skills.length} skill(s) · shown in the "Skills in Orbit" section</div></div>
+    <div style="margin-left:auto"><button class="btn" id="exportSkills"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-chart-line"></i> Add / Edit Skill</h2>
+    <form id="skillForm">
+      <input type="hidden" id="skillId">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Skill Name</label><input name="n" placeholder="e.g. Logo Design" required></div>
+        <div class="field" style="flex:1;margin:0"><label>Category</label><input name="c" placeholder="e.g. Creative" required></div>
+      </div>
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Font Awesome Icon Class</label><input name="i" placeholder="fa-pen-nib" required></div>
+        <div class="field" style="flex:1;margin:0"><label>Level (0-100)</label><input name="lv" type="number" min="0" max="100" placeholder="90" required></div>
+      </div>
+      <div class="toolbar" style="margin-top:6px">
+        <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> <span id="skillSubmit">Add Skill</span></button>
+        <button class="btn ghost" type="button" id="skillCancel" style="display:none">Cancel Edit</button>
+      </div>
+    </form>
+  </div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-layer-group"></i> Skills List</h2>
+    <div class="chip-row" id="skillChips">${skills.map(s=>skillChip(s)).join("")}</div>
+    ${skills.length?'<div class="empty" style="padding:6px 0 0">Click the pen to edit · × to delete</div>':''}
+  </div>`;
+}
+function skillChip(s){
+  return `<span class="chip"><i class="fa-solid ${s.i}" style="color:var(--electric)"></i> ${esc(s.n)} <span style="color:var(--muted);font-weight:500;font-size:.75rem">· ${s.lv}%</span>
+    <button data-editskill="${s.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
+    <button data-delskill="${s.id||''}" data-name="${esc(s.n)}" title="Delete"><i class="fa-solid fa-xmark"></i></button></span>`;
+}
+function renderOwnerSkills(){
+  const wrap=$("#skillChips"); if(!wrap) return;
+  const skills=State.skills.length?State.skills:[];
+  wrap.innerHTML=skills.map(s=>skillChip(s)).join("");
+  $$("[data-editskill]",wrap).forEach(b=>b.addEventListener("click",()=>editSkill(b.dataset.editskill)));
+  $$("[data-delskill]",wrap).forEach(b=>b.addEventListener("click",async()=>{ if(b.dataset.delskill){ await Backend.delSkill(b.dataset.delskill); } else { toast("Seeded item can't be removed here.","info"); } renderOwnerSkills(); }));
+}
+function editSkill(id){
+  const s=State.skills.find(x=>x.id===id); if(!s) return;
+  $("#skillId").value=id; const f=$("#skillForm");
+  f.n.value=s.n||""; f.c.value=s.c||""; f.i.value=s.i||""; f.lv.value=(s.lv!=null)?s.lv:"";
+  $("#skillSubmit").textContent="Update Skill"; $("#skillCancel").style.display="";
+  toast("Editing: "+s.n,"info");
+}
+function resetSkillForm(){ const f=$("#skillForm"); if(f) f.reset(); const sid=$("#skillId"); if(sid) sid.value=""; const ps=$("#skillSubmit"); if(ps) ps.textContent="Add Skill"; const pc=$("#skillCancel"); if(pc) pc.style.display="none"; }
+function wireSkillForm(){
+  $("#skillCancel")?.addEventListener("click",resetSkillForm);
+  $("#skillForm")?.addEventListener("submit",async e=>{
+    e.preventDefault(); const f=e.target; const n=f.n.value.trim(); const c=f.c.value.trim(); const i=f.i.value.trim(); const lv=parseInt(f.lv.value,10);
+    if(!n||!c||!i||isNaN(lv)){ toast("Name, category, icon and a valid level are required.","err"); return; }
+    const patch={ n, c, i, lv };
+    const id=$("#skillId").value;
+    if(id){ await Backend.updateSkill(id,patch); toast("Skill updated.","ok"); }
+    else { await Backend.addSkill(patch); toast("Skill added.","ok"); }
+    resetSkillForm(); renderOwnerSkills(); renderSkills();
+  });
+}
 function ownerCreds(){
   const o=State._owner||{user:State.settings.adminUser};
   return `
@@ -1978,6 +2190,13 @@ function wireOwnerView(view){
     });
     $("#siteForm").addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target); const patch=Object.fromEntries(fd);
       await Backend.updateSettings(patch); applySettings({...State.settings,...patch}); toast("Site updated — live on public page!","ok"); });
+    $("#sectionsForm")?.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target);
+      const keys=["work","skills","services"]; const sections={};
+      keys.forEach(k=>{ sections[k]={ eyebrow:(fd.get(k+"_eyebrow")||"").trim(), title:(fd.get(k+"_title")||"").trim(), accent:(fd.get(k+"_accent")||"").trim(), sub:(fd.get(k+"_sub")||"").trim() }; });
+      await Backend.updateSettings({sections});
+      State.settings.sections=sections; applySections();
+      toast("Section headings saved — live on public page!","ok");
+    });
     $("#previewSite").addEventListener("click",startOwnerPreview);
     $("#seedSite")?.addEventListener("click",async()=>{ if(confirm("Reset all site content to defaults? Your current text will be overwritten.")){ await Backend.updateSettings({...DEFAULT_SETTINGS,updatedAt:Date.now()}); applySettings({...State.settings,...DEFAULT_SETTINGS}); toast("Site data seeded.","ok"); } });
   }
@@ -1989,6 +2208,12 @@ function wireOwnerView(view){
   }
   if(view==="o-cats"){ renderProducts(); wireProdForm();
     $("#exportProds")?.addEventListener("click",()=>exportCSV(State.cats.map(c=>({name:c.name,price_usd:c.price||"",desc:c.desc||"",media:c.mediaType||"none",use_template:c.useTemplate?"yes":"no"})),"products.csv"));
+  }
+  if(view==="o-work"){ renderOwnerWork(); wireProjForm();
+    $("#exportProjs")?.addEventListener("click",()=>exportCSV(State.projects.map(p=>({title:p.t,category:p.cat,image:p.img,demo:p.demo||"#",case_study:p.case||"",stack:(p.stack||[]).join(" | ")})),"projects.csv"));
+  }
+  if(view==="o-skills"){ renderOwnerSkills(); wireSkillForm();
+    $("#exportSkills")?.addEventListener("click",()=>exportCSV(State.skills.map(s=>({name:s.n,category:s.c,icon:s.i,level:s.lv})),"skills.csv"));
   }
   if(view==="o-creds"){ $("#credForm").addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target);
     if(fd.get("nw")!==fd.get("cf")){ toast("Passwords don't match.","err"); return; }
@@ -2049,6 +2274,11 @@ let _revealIO=null;
 function initReveal(){
   if(!_revealIO){ _revealIO=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); _revealIO.unobserve(e.target); } }); },{threshold:.12}); }
   $$(".reveal:not(.in)").forEach(el=>_revealIO.observe(el));
+}
+/* If a freshly rendered element is already inside the viewport, reveal it
+   immediately so re-renders (e.g. when real data arrives) never re-fade slowly. */
+function revealVisible(root){
+  $$(".reveal:not(.in)",root).forEach(el=>{ const r=el.getBoundingClientRect(); if(r.top < innerHeight*0.96 && r.bottom>0) el.classList.add("in"); });
 }
 function wirePasswordToggles(root=document){
   $$(".pwd-toggle:not([data-wired])",root).forEach(btn=>{
@@ -2170,6 +2400,8 @@ async function boot(){
   // firestore onSnapshot / demo bus listeners
   Backend.watchSettings(s=>{ State.settings=s; applySettings(s); rtPill("Site content updated"); });
   Backend.watchCats(c=>{ State.cats=c; if($("#ownerPanel").classList.contains("open")) renderProducts(); renderServices(); });
+  Backend.watchProjects(p=>{ State.projects=p; if($("#ownerPanel").classList.contains("open")) renderOwnerWork(); renderWork(); });
+  Backend.watchSkills(s=>{ State.skills=s; if($("#ownerPanel").classList.contains("open")) renderOwnerSkills(); renderSkills(); });
   Backend.watchOrders(o=>{ State.orders=o; if($("#ownerPanel").classList.contains("open")){ if($("#ordersBody")) renderOrdersTable(); } if($("#userPanel").classList.contains("open")){ const v=$("#userNav .active")?.dataset.view; if(v==="u-home"||v==="u-orders") setUserView(v); } });
   Backend.watchUsers(u=>{ State.users=u; if($("#ownerPanel").classList.contains("open")&&$("#usersBody")) renderUsersTable(); });
 
@@ -2185,11 +2417,11 @@ async function loadSiteData(mode){
   try{ State.settings = await Backend.getSettings(); }catch(e){ settingsOk=false; State.settings={...DEFAULT_SETTINGS}; console.warn("getSettings failed (check Firestore rules):",e); }
   applySettings(State.settings);
 
-  // Seed default settings/categories in the background (needs write permission).
+  // Seed default settings/categories/projects/skills in the background (needs write permission).
   // Runs in parallel and never blocks the visible UI; the onSnapshot listeners
   // will refresh the grid once the seeded data is written.
   if(mode==="firebase"){
-    Promise.all([ Backend.ensureSettings().catch(()=>{}), Backend.ensureCategories().catch(()=>{}) ])
+    Promise.all([ Backend.ensureSettings().catch(()=>{}), Backend.ensureCategories().catch(()=>{}), Backend.ensureProjects().catch(()=>{}), Backend.ensureSkills().catch(()=>{}) ])
       .then(async ()=>{ try{ State.settings = await Backend.getSettings(); applySettings(State.settings); }catch(e){} })
       .catch(()=>{});
   }
@@ -2198,6 +2430,13 @@ async function loadSiteData(mode){
   // (It was already painted from defaults, so there is never a blank moment.)
   try{ State.cats = await Backend.getCats(); }catch(e){ State.cats=DEFAULT_CATEGORIES.map(n=>({name:n})); }
   renderServices();
+
+  // Projects (Portfolio / "Crafted with Precision") and Skills ("Skills in Orbit"):
+  // refresh those sections with the real, owner-edited data as soon as it arrives.
+  try{ State.projects = await Backend.getProjects(); }catch(e){ State.projects=PROJECTS; }
+  renderWork();
+  try{ State.skills = await Backend.getSkills(); }catch(e){ State.skills=SKILLS; }
+  renderSkills();
 
   // Orders / users / owner are NOT needed for the public product display,
   // so load them in the background and only re-render panel tables if open.
