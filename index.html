@@ -239,14 +239,15 @@ section{padding:clamp(60px,9vw,120px) 0;position:relative}
 .node-tip{position:absolute;left:64px;top:50%;transform:translateY(-50%) translateX(-8px);white-space:nowrap;
   background:var(--bg-3);padding:6px 12px;border-radius:10px;font-size:.78rem;opacity:0;visibility:hidden;transition:.2s;z-index:5;
   border:1px solid var(--glass-border)}
-.skills-list{display:flex;flex-direction:column;gap:14px}
-.skill-row{display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:18px}
-.skill-row .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:1.2rem;background:var(--grad);color:#fff;flex:none}
-.skill-row .body{flex:1}
-.skill-row .name{font-weight:700;font-size:.95rem}
-.skill-row .bar{height:7px;border-radius:6px;background:var(--glass-1);margin-top:8px;overflow:hidden}
-.skill-row .bar i{display:block;height:100%;width:0;border-radius:6px;background:var(--grad);transition:width .8s ease}
-.skill-row .pct{font-size:.8rem;color:var(--muted);font-weight:700;min-width:42px;text-align:right}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.skill-card{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:18px}
+.skill-card .ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.25rem;background:var(--grad);color:#fff;flex:none}
+.skill-card .body{flex:1;min-width:0}
+.skill-card .name{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skill-card .cat{color:var(--muted);font-size:.78rem;margin-bottom:6px}
+.skill-card .bar{height:7px;border-radius:6px;background:var(--glass-1);overflow:hidden}
+.skill-card .bar i{display:block;height:100%;width:0;border-radius:6px;background:var(--grad);transition:width .8s ease}
+.skill-card .pct{font-size:.8rem;color:var(--muted);font-weight:700;min-width:42px;text-align:right}
 
 /* ============================================================
    ABOUT / CONTACT
@@ -437,6 +438,13 @@ tbody tr:hover{background:var(--glass-1)}
 .lang-item .nm{font-weight:600}
 .lang-item .en{color:var(--muted);font-size:.76rem;margin-left:4px}
 .lang-item.active .en{color:rgba(255,255,255,.85)}
+
+/* Frame shapes for owner profile image + logo/favicon (set in Owner Panel) */
+.frame-circle{border-radius:50%!important;clip-path:none!important}
+.frame-rounded{border-radius:24px!important;clip-path:none!important}
+.frame-square{border-radius:6px!important;clip-path:none!important}
+.frame-hex{clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0% 50%)!important;border-radius:0!important}
+.frame-hex img{border-radius:0!important}
 
 /* ============================================================
    SERVICES / PRODUCTS (owner-priced, multi-currency, media/templates)
@@ -898,6 +906,7 @@ const DEFAULT_SETTINGS = {
   adminPass: "sarib123",
   avatar: "",            // owner profile image (dataURL or URL) — shown in Owner Panel
   logo: "",              // site logo / favicon (dataURL or URL) — navbar + browser tab
+  frame: "circle",       // display shape for owner profile image + logo/favicon: circle | rounded | square | hex
   fastWa: "",            // WhatsApp number that receives FAST / priority orders (owner-specified)
   fastFee: 0,            // extra charge (USD) for the fast / priority service, defined by owner
   socials: [             // owner-provided social profiles (only those with a url are shown)
@@ -1579,7 +1588,8 @@ const State = {
   orderFiles: [],
   currency: "USD",
   _preCat: null,
-  _prodMedia: null
+  _prodMedia: null,
+  _projMedia: null
 };
 
 /* ============================================================================
@@ -1592,6 +1602,7 @@ function applySettings(s){
   setLogoEl($("#ownerBrandLogo"), s.logo||s.avatar);
   setLogoEl($("#ownerAvatar"), s.avatar||s.logo);
   const fav = s.logo||s.avatar; const fEl=$("#favicon"); if(fEl && fav) fEl.href = fav;
+  applyFrame();
   $("#heroName").textContent = s.name;
   $("#heroDesc").textContent = s.desc;
   $("#aboutName").textContent = s.name;
@@ -1624,6 +1635,16 @@ function setLogoEl(el, img){
   if(!el) return;
   if(img){ el.innerHTML = '<img src="'+img+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">'; }
   else { el.textContent = "S"; }
+}
+/* Apply the owner-chosen frame shape to the profile image + logo/favicon. */
+function applyFrame(){
+  const shape = (State.settings.frame||"circle");
+  const cls = "frame-"+shape;
+  ["#ownerAvatar","#brandLogo","#ownerBrandLogo","#avOwner","#logoOwner"].forEach(sel=>{
+    const elx=$(sel); if(!elx) return;
+    elx.classList.remove("frame-circle","frame-rounded","frame-square","frame-hex");
+    elx.classList.add(cls);
+  });
 }
 function renderSocials(){
   const list=(State.settings.socials||[]).filter(x=>x&&x.url&&String(x.url).trim());
@@ -1676,11 +1697,11 @@ function renderSkills(){
     node.style.transform = `translate3d(${x}px,${y}px,${z}px)`;
     sphere.appendChild(node);
   });
-  const sk = $("#skillsList"); sk.innerHTML="";
+  const sk = $("#skillsList"); sk.innerHTML=""; sk.className="skills-grid";
   list.forEach(s=>{
-    const row = el("div","skill-row glass-sm reveal");
+    const row = el("div","skill-card glass-sm reveal");
     row.innerHTML = `<div class="ic"><i class="fa-solid ${s.i}"></i></div>
-      <div class="body"><div class="name">${esc(s.n)} <span style="color:var(--muted);font-weight:500;font-size:.75rem">· ${s.c}</span></div>
+      <div class="body"><div class="name">${esc(s.n)}</div><div class="cat">${esc(s.c)}</div>
       <div class="bar"><i data-w="${s.lv}"></i></div></div>
       <div class="pct">${s.lv}%</div>`;
     sk.appendChild(row);
@@ -2021,9 +2042,6 @@ function wireOrderModal(){
       date:new Date().toISOString().slice(0,19).replace("T"," "), userId:State.currentUser.id
     };
     const saved=await Backend.addOrder(o);
-    // notify owner by email (always)
-    const msg=`New Order ${saved.orderId}\nCategory: ${o.category}\nCustomer: ${o.customer} (${o.email})\nBrief: ${o.description}`;
-    window.open(mailLink(State.settings.email,"New Order "+saved.orderId,msg),"_blank");
     b.disabled=false; b.innerHTML='<span id="orderSubmitTxt">Submit Order</span> <i class="fa-solid fa-paper-plane"></i>';
     closeModal($("#orderOverlay"));
     // offer fast / priority service (sends order to admin on WhatsApp if accepted)
@@ -2073,6 +2091,9 @@ function showFastModal(order){
     toast("Fast order sent to admin via WhatsApp! 🚀","ok");
   };
   $("#fastNo").onclick = ()=>{
+    // standard delivery: notify the owner on WhatsApp (no disruptive blank/email tab)
+    const msg=`New Order ${order.orderId}\nCategory: ${order.category}\nCustomer: ${order.customer} (${order.email})\nBrief: ${order.description}`;
+    window.open(waLink(State.settings.phone, msg), "_blank");
     closeModal(m);
     toast("Order placed! Owner notified. 🚀","ok");
   };
@@ -2173,6 +2194,16 @@ function ownerProfile(){
       </div>
     </div>
     <form id="siteForm">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Image / Logo Frame Shape</label>
+          <select name="frame">
+            <option value="circle" ${s.frame==="circle"?"selected":""}>Circle</option>
+            <option value="rounded" ${s.frame==="rounded"?"selected":""}>Rounded Square</option>
+            <option value="square" ${s.frame==="square"?"selected":""}>Square</option>
+            <option value="hex" ${s.frame==="hex"?"selected":""}>Hexagon</option>
+          </select>
+        </div>
+      </div>
       <div class="toolbar" style="margin-bottom:14px">
         <div class="field" style="flex:1;margin:0"><label>Full Name</label><input name="name" value="${esc(s.name)}"></div>
         <div class="field" style="flex:1;margin:0"><label>Title / Cast</label><input name="cast" value="${esc(s.cast)}"></div>
@@ -2447,7 +2478,12 @@ function ownerWork(){
         <div class="field" style="flex:1;margin:0"><label>Project Title</label><input name="t" placeholder="e.g. Nebula Brand System" required></div>
         <div class="field" style="flex:1;margin:0"><label>Category</label><input name="cat" placeholder="e.g. Branding" required></div>
       </div>
-      <div class="field" style="margin-bottom:14px"><label>Image / Gradient (image URL or CSS gradient)</label><input name="img" placeholder="linear-gradient(135deg,#4a7cf7,#7c5cfc) or https://..."></div>
+      <div class="field" style="margin-bottom:14px">
+        <label>Project Image (optional)</label>
+        <div class="dropzone" id="projDrop"><i class="fa-solid fa-cloud-arrow-up"></i><div style="margin-top:6px">Drag &amp; drop or click to upload an image (optional)</div><input type="file" id="projMedia" accept="image/*" hidden></div>
+        <div class="filelist" id="projMediaList"></div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label>Or image URL / CSS gradient (optional)</label><input name="img" placeholder="linear-gradient(135deg,#4a7cf7,#7c5cfc) or https://..."></div>
       <div class="toolbar" style="margin-bottom:14px">
         <div class="field" style="flex:1;margin:0"><label>Demo URL</label><input name="demo" placeholder="https://... (optional)"></div>
         <div class="field" style="flex:1;margin:0"><label>Case Study URL</label><input name="case" placeholder="https://... (optional)"></div>
@@ -2481,16 +2517,22 @@ function editProject(id){
   const p=State.projects.find(x=>x.id===id); if(!p) return;
   $("#projId").value=id; const f=$("#projForm");
   f.t.value=p.t||""; f.cat.value=p.cat||""; f.img.value=p.img||""; f.demo.value=p.demo||""; f.case.value=p.case||""; f.stack.value=(p.stack||[]).join(", ");
+  State._projMedia = (p.img && /^(https?:|data:)/.test(p.img)) ? p.img : null;
+  $("#projMediaList").innerHTML = State._projMedia ? `<div><i class="fa-solid fa-paperclip"></i> image attached</div>` : "";
   $("#projSubmit").textContent="Update Project"; $("#projCancel").style.display="";
   toast("Editing: "+p.t,"info");
 }
-function resetProjForm(){ const f=$("#projForm"); if(f) f.reset(); const pid=$("#projId"); if(pid) pid.value=""; const ps=$("#projSubmit"); if(ps) ps.textContent="Add Project"; const pc=$("#projCancel"); if(pc) pc.style.display="none"; }
+function resetProjForm(){ const f=$("#projForm"); if(f) f.reset(); const pid=$("#projId"); if(pid) pid.value=""; const ps=$("#projSubmit"); if(ps) ps.textContent="Add Project"; const pc=$("#projCancel"); if(pc) pc.style.display="none"; State._projMedia=null; const ml=$("#projMediaList"); if(ml) ml.innerHTML=""; }
 function wireProjForm(){
+  const drop=$("#projDrop"), inp=$("#projMedia");
+  drop?.addEventListener("click",()=>inp.click());
+  inp?.addEventListener("change",()=>{ const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ State._projMedia=r.result; $("#projMediaList").innerHTML=`<div><i class="fa-solid fa-paperclip"></i> ${esc(f.name)}</div>`; }; r.readAsDataURL(f); });
   $("#projCancel")?.addEventListener("click",resetProjForm);
   $("#projForm")?.addEventListener("submit",async e=>{
     e.preventDefault(); const f=e.target; const t=f.t.value.trim(); const cat=f.cat.value.trim();
     if(!t||!cat){ toast("Title and category are required.","err"); return; }
-    const patch={ t, cat, img:f.img.value.trim()||"linear-gradient(135deg,#4a7cf7,#7c5cfc)", demo:f.demo.value.trim()||"#", case:f.case.value.trim(), stack:f.stack.value.split(",").map(s=>s.trim()).filter(Boolean) };
+    const img = State._projMedia || f.img.value.trim() || "linear-gradient(135deg,#4a7cf7,#7c5cfc)";
+    const patch={ t, cat, img, demo:f.demo.value.trim()||"#", case:f.case.value.trim(), stack:f.stack.value.split(",").map(s=>s.trim()).filter(Boolean) };
     const id=$("#projId").value;
     if(id){ await Backend.updateProject(id,patch); toast("Project updated.","ok"); }
     else { await Backend.addProject(patch); toast("Project added.","ok"); }
@@ -2678,7 +2720,7 @@ function initCounters(){
   $$("[data-count]").forEach(n=>io.observe(n));
   // skill bars
   const io2=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ const i=e.target.querySelector("i"); if(i) i.style.width=i.dataset.w+"%"; io2.unobserve(e.target); } }); },{threshold:.3});
-  $$(".skill-row").forEach(r=>io2.observe(r));
+  $$(".skill-card").forEach(r=>io2.observe(r));
 }
 let _revealIO=null;
 function initReveal(){
