@@ -680,7 +680,7 @@ tbody tr:hover{background:var(--glass-1)}
         <div class="status-badge" style="align-self:flex-start"><span class="dot"></span> <span data-i18n="contact.accepting" data-i18n-text>Currently Accepting New Projects</span></div>
         <p class="section-sub">Whether it's a brand from scratch, a 3D product reveal, or a full-stack app — tell me what you're building and let's make it real.</p>
         <button class="btn pulse" id="contactCta" style="align-self:flex-start"><span data-i18n="contact.start" data-i18n-text>Start a Project</span> <i class="fa-solid fa-arrow-right"></i></button>
-        <div class="glass-sm" style="padding:18px;font-size:.85rem;color:var(--muted)"><i class="fa-solid fa-clock"></i> Typical response time: <b style="color:var(--txt)">under 4 hours</b> during business days.</div>
+        <div class="glass-sm" style="padding:18px;font-size:.85rem;color:var(--muted)"><i class="fa-solid fa-clock"></i> Typical response time: <b style="color:var(--txt)" id="respTime"></b></div>
       </div>
     </div>
   </div>
@@ -698,7 +698,7 @@ tbody tr:hover{background:var(--glass-1)}
 
 <footer>
   <div class="wrap">
-    <p>© <span id="year"></span> M. Sarib Randhawa — <span data-i18n="footer" data-i18n-text>Crafted with 3D, glass & code.</span></p>
+    <p>© <span id="year"></span> <span id="footerLine"></span></p>
   </div>
 </footer>
 
@@ -902,6 +902,8 @@ const DEFAULT_SETTINGS = {
   phone: "923007847827",
   email: "saribshareefbacha@gmail.com",
   location: "Pakistan · Remote & Contract",
+  footer: "M. Sarib Randhawa — Crafted with 3D, glass & code.",
+  responseTime: "under 4 hours during business days.",
   adminUser: "sarib",
   adminPass: "sarib123",
   avatar: "",            // owner profile image (dataURL or URL) — shown in Owner Panel
@@ -1618,6 +1620,9 @@ function applySettings(s){
   document.title = s.name + " — " + (s.cast||"Creative Technologist");
   renderSocials();
   applySections();
+  // Owner-editable footer line + typical response time (set in Site Settings)
+  const footerEl=$("#footerLine"); if(footerEl) footerEl.textContent = s.footer || "M. Sarib Randhawa — Crafted with 3D, glass & code.";
+  const respEl=$("#respTime"); if(respEl) respEl.textContent = s.responseTime || "under 4 hours during business days.";
 }
 /* Editable section headings (eyebrow / title / gradient-accent word / subtitle) */
 function applySections(){
@@ -2225,6 +2230,10 @@ function ownerProfile(){
         <div class="field" style="flex:1;margin:0"><label>Email</label><input name="email" value="${esc(s.email)}"></div>
       </div>
       <div class="field"><label>Description</label><textarea name="desc">${esc(s.desc)}</textarea></div>
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Footer Text</label><input name="footer" value="${esc(s.footer || DEFAULT_SETTINGS.footer)}"></div>
+        <div class="field" style="flex:1;margin:0"><label>Typical Response Time</label><input name="responseTime" value="${esc(s.responseTime || DEFAULT_SETTINGS.responseTime)}"></div>
+      </div>
       <div class="toolbar">
         <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
         <button class="btn ghost" type="button" id="seedSite"><i class="fa-solid fa-wand-magic-sparkles"></i> Seed / Reset Data</button>
