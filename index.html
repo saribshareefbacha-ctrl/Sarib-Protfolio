@@ -1793,8 +1793,6 @@ function showFastModal(order){
     toast("Fast order sent to admin via WhatsApp! 🚀","ok");
   };
   $("#fastNo").onclick = ()=>{
-    const msg=`New Order ${order.orderId}\nCategory: ${order.category}\nCustomer: ${order.customer} (${order.email})\nBrief: ${order.description}`;
-    window.open(waLink(State.settings.phone, msg), "_blank");
     closeModal(m);
     toast("Order placed! Owner notified. 🚀","ok");
   };
