@@ -456,8 +456,6 @@ tbody tr:hover{background:var(--glass-1)}
       <div class="dots-menu">
         <button class="icon-btn" id="dotsBtn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
         <div class="dropdown glass" id="dotsDropdown">
-          <button id="ownerLoginMenuItem"><i class="fa-solid fa-user-shield"></i> Owner Panel Login</button>
-          <div class="divider"></div>
           <button id="themeMenuItem"><i class="fa-solid fa-circle-half-stroke"></i> Dark / Light Mode</button>
           <button id="helpMenuItem"><i class="fa-solid fa-circle-question"></i> Help & Support</button>
           <div class="lang-flags" id="langFlags">
@@ -618,7 +616,7 @@ tbody tr:hover{background:var(--glass-1)}
     <p class="sub">Log in to access your dashboard.</p>
     <div class="form-msg" id="loginMsg"></div>
     <form id="loginForm" novalidate>
-      <div class="field"><label>Email</label><input type="email" name="email" placeholder="you@email.com" required><span class="err">Enter a valid email.</span></div>
+      <div class="field"><label>Email or Username</label><input type="text" name="email" placeholder="you@email.com or sarib" required><span class="err">Required.</span></div>
       <div class="field"><label>Password</label><input type="password" name="password" placeholder="••••••••" required><span class="err">Password is required.</span></div>
       <button type="submit" class="btn" style="width:100%">Log In <i class="fa-solid fa-arrow-right"></i></button>
     </form>
@@ -731,20 +729,6 @@ tbody tr:hover{background:var(--glass-1)}
 </div>
 
 <!-- ========================= OWNER PANEL ========================= -->
-<div class="overlay" id="ownerLoginOverlay">
-  <div class="modal glass">
-    <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
-    <h2><i class="fa-solid fa-user-shield"></i> Owner Panel</h2>
-    <p class="sub">Enter your admin credentials.</p>
-    <div class="form-msg" id="ownerMsg"></div>
-    <form id="ownerLoginForm" novalidate>
-      <div class="field"><label>Username</label><input name="username" placeholder="Sarib" required><span class="err">Required.</span></div>
-      <div class="field"><label>Password</label><input type="password" name="password" placeholder="••••••••" required><span class="err">Required.</span></div>
-      <button type="submit" class="btn" style="width:100%">Enter Panel <i class="fa-solid fa-lock"></i></button>
-    </form>
-  </div>
-</div>
-
 <div class="panel" id="ownerPanel">
   <div class="panel-shell">
     <aside class="sidebar">
@@ -802,6 +786,7 @@ const DEFAULT_SETTINGS = {
   adminUser: "sarib",
   adminPass: "sarib123"
 };
+const OWNER_GOOGLE_EMAIL = "saribshareefbacha@gmail.com";
 const DEFAULT_CATEGORIES = [
   "Logo & Brand Identity","3D Modeling","Video Editing","Photo Editing","AI Voice",
   "Social Media Content","Full Stack Web","App Development","UI/UX Design","Automation",
@@ -1148,14 +1133,22 @@ async function handleSignup(e){
 }
 async function handleLogin(e){
   e.preventDefault(); const f=e.target; if(!validate(f)) return;
-  const fd=new FormData(f); const email=fd.get("email"), password=fd.get("password");
+  const fd=new FormData(f); const id=fd.get("email").trim(), password=fd.get("password");
   const msg=$("#loginMsg"); msg.className="form-msg";
   const btn=f.querySelector("button[type=submit]"); const txt=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Logging in...';
   try{
-    const res=await Backend.loginEmail(email,password);
+    // ---- OWNER check (same login fields as regular users) ----
+    const owU=(State.settings.adminUser||"").toLowerCase();
+    if(id.toLowerCase()===owU && password===State.settings.adminPass){
+      State.owner={user:State.settings.adminUser};
+      btn.disabled=false; btn.innerHTML=txt; closeModal($("#loginOverlay")); f.reset();
+      onOwnerLogin(); toast("Welcome, Owner.","ok"); return;
+    }
+    // ---- regular user ----
+    const res=await Backend.loginEmail(id,password);
     if(res.ok){
       let u = res.user || null;
-      if(!u){ const users=await Backend.getUsers(); u = users.find(x=>x.id===res.uid) || users.find(x=>x.email===email); }
+      if(!u){ const users=await Backend.getUsers(); u = users.find(x=>x.id===res.uid) || users.find(x=>x.email===id); }
       State.currentUser = u;
       if(State.currentUser && State.currentUser.status==="blocked"){ await Backend.logout(); State.currentUser=null; msg.textContent="This account is blocked."; msg.classList.add("show","err"); }
       else { toast("Logged in!","ok"); closeModal($("#loginOverlay")); f.reset(); onUserLogin(); }
@@ -1166,8 +1159,14 @@ async function handleLogin(e){
 async function handleGoogle(e){
   e.preventDefault();
   try{ const res=await Backend.loginGoogle();
-    if(res.ok){ State.currentUser=res.user; toast("Signed in with Google!","ok"); $$(".overlay.open").forEach(closeModal); onUserLogin(); }
-    else toast(res.error,"err");
+    if(res.ok){
+      const u=res.user;
+      if(u && u.email && u.email.toLowerCase()===OWNER_GOOGLE_EMAIL.toLowerCase()){
+        State.owner={user:State.settings.adminUser||"sarib"};
+        $$(".overlay.open").forEach(closeModal); onOwnerLogin(); toast("Welcome, Owner.","ok"); return;
+      }
+      State.currentUser=u; toast("Signed in with Google!","ok"); $$(".overlay.open").forEach(closeModal); onUserLogin();
+    } else toast(res.error,"err");
   }catch(err){ toast(err.message,"err"); }
 }
 async function handleForgot(e){
@@ -1186,6 +1185,15 @@ function onUserLogin(){
   $("#chipName").textContent = u.name||u.username||"User";
   const av=$("#chipAvatar"); if(u.avatar){ av.src=u.avatar; } else { av.removeAttribute("src"); av.style.background="var(--grad)"; av.textContent=(u.name||"U")[0]; }
   openUserPanel("u-home");
+}
+
+function onOwnerLogin(){
+  // Owner sees ONLY the owner panel — never the user panel or user nav
+  State.currentUser=null;
+  $("#getStartedBtn").classList.add("hidden");
+  $("#userChip").classList.add("hidden");
+  $("#dashboardBtn").classList.add("hidden");
+  openOwnerPanel("o-home");
 }
 function onUserLogout(){
   State.currentUser=null;
@@ -1439,21 +1447,17 @@ function showOrderDetail(id){
 /* ============================================================================
    OWNER PANEL
    ========================================================================== */
-async function openOwnerLogin(){ openModal("ownerLoginOverlay"); }
-async function handleOwnerLogin(e){
-  e.preventDefault(); const f=e.target; const fd=new FormData(f);
-  const msg=$("#ownerMsg"); msg.className="form-msg";
-  const btn=f.querySelector("button"); const txt=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Verifying...';
-  try{
-    const ok=await Backend.ownerLogin(fd.get("username"),fd.get("password"));
-    btn.disabled=false; btn.innerHTML=txt;
-    if(ok){ try{ await Backend.ensureSettings(); }catch(e){ /* needs Firestore write permission on settings/owner */ } State.owner={user:fd.get("username")}; closeModal($("#ownerLoginOverlay")); f.reset(); openOwnerPanel("o-home"); toast("Owner console unlocked.","ok"); }
-    else { msg.textContent="Invalid owner credentials."; msg.classList.add("show","err"); }
-  }catch(err){ btn.disabled=false; btn.innerHTML=txt; msg.textContent="Firebase error: "+(err&&err.message?err.message:err)+". Check Firestore rules for settings/owner."; msg.classList.add("show","err"); }
-}
 function openOwnerPanel(view){
   $("#ownerPanel").classList.add("open"); document.body.style.overflow="hidden";
   setOwnerView(view||"o-home");
+}
+function startOwnerPreview(){
+  $("#ownerPanel").classList.remove("open"); document.body.style.overflow="";
+  const b=el("button","btn","<i class='fa-solid fa-arrow-left'></i> Back to Panel");
+  b.style.cssText="position:fixed;bottom:24px;left:24px;z-index:1600";
+  b.onclick=()=>{ b.remove(); openOwnerPanel("o-home"); };
+  document.body.appendChild(b);
+  toast("Previewing public site.","info");
 }
 function setOwnerView(view){
   $$("#ownerNav button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
@@ -1648,7 +1652,7 @@ function wireOwnerView(view){
   if(view==="o-profile"){
     $("#siteForm").addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target); const patch=Object.fromEntries(fd);
       await Backend.updateSettings(patch); applySettings({...State.settings,...patch}); toast("Site updated — live on public page!","ok"); });
-    $("#previewSite").addEventListener("click",()=>{ $("#ownerPanel").classList.remove("open"); document.body.style.overflow=""; toast("Previewing public site. Reopen via Owner menu.","info"); $("#dotsDropdown").classList.add("open"); });
+    $("#previewSite").addEventListener("click",startOwnerPreview);
     $("#seedSite")?.addEventListener("click",async()=>{ if(confirm("Reset all site content to defaults? Your current text will be overwritten.")){ await Backend.updateSettings({...DEFAULT_SETTINGS,updatedAt:Date.now()}); applySettings({...State.settings,...DEFAULT_SETTINGS}); toast("Site data seeded.","ok"); } });
   }
   if(view==="o-orders"){ renderOrdersTable(); $("#oSearch")?.addEventListener("input",renderOrdersTable); $("#oStatus")?.addEventListener("change",renderOrdersTable);
@@ -1747,14 +1751,13 @@ function initNav(){
   // dots dropdown
   $("#dotsBtn").onclick=e=>{ e.stopPropagation(); $("#dotsDropdown").classList.toggle("open"); };
   document.addEventListener("click",e=>{ if(!e.target.closest(".dots-menu")) $("#dotsDropdown").classList.remove("open"); });
-  $("#ownerLoginMenuItem").onclick=()=>{ $("#dotsDropdown").classList.remove("open"); openOwnerLogin(); };
   $("#themeMenuItem").onclick=()=>{ $("#dotsDropdown").classList.remove("open"); toggleTheme(); };
   $("#helpMenuItem").onclick=()=>{ $("#dotsDropdown").classList.remove("open"); toast("Support: email "+State.settings.email+" or WhatsApp.","info"); };
   $("#dashboardBtn").onclick=()=>{ if(State.currentUser) openUserPanel("u-home"); else openModal("loginOverlay"); };
   $("#userHomeBtn").onclick=()=>{ $("#userPanel").classList.remove("open"); document.body.style.overflow=""; };
   $("#userLogout").onclick=async()=>{ await Backend.logout(); onUserLogout(); };
-  $("#ownerLogout").onclick=()=>{ State.owner=null; $("#ownerPanel").classList.remove("open"); document.body.style.overflow=""; toast("Owner logged out.","info"); };
-  $("#ownerPreview").onclick=()=>{ $("#ownerPanel").classList.remove("open"); document.body.style.overflow=""; toast("Previewing site. Use Owner menu to return.","info"); $("#dotsDropdown").classList.add("open"); };
+  $("#ownerLogout").onclick=()=>{ State.owner=null; State.currentUser=null; $("#ownerPanel").classList.remove("open"); document.body.style.overflow=""; $("#getStartedBtn").classList.remove("hidden"); toast("Owner logged out.","info"); };
+  $("#ownerPreview").onclick=startOwnerPreview;
   $$("#userNav button").forEach(b=>b.onclick=()=>setUserView(b.dataset.view));
   $$("#ownerNav button").forEach(b=>b.onclick=()=>setOwnerView(b.dataset.view));
 }
@@ -1788,13 +1791,12 @@ async function boot(){
     window.open(mailLink(State.settings.email,"Hire Request",msg),"_blank"); window.open(waLink(State.settings.phone,msg),"_blank");
     closeModal($("#hireOverlay")); toast("Request sent to owner!","ok"); e.target.reset();
   });
-  $("#ownerLoginForm").addEventListener("submit",handleOwnerLogin);
-
   const mode = await Backend.init();
 
   // restore session on reload (Firebase auth)
   Backend.onAuth(async fbUser=>{
     if(fbUser){
+      if(fbUser.email && fbUser.email.toLowerCase()===OWNER_GOOGLE_EMAIL.toLowerCase()){ State.owner={user:State.settings.adminUser||"sarib"}; onOwnerLogin(); return; }
       const users=await Backend.getUsers(); const me=users.find(x=>x.id===fbUser.uid);
       if(me){ if(me.status==="blocked"){ await Backend.logout(); State.currentUser=null; onUserLogout(); toast("This account is blocked.","err"); }
         else { State.currentUser=me; onUserLoginSilent(); } }
