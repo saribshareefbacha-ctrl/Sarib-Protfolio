@@ -8,7 +8,7 @@ authentication and real‑time data sync.
 
 - **Public site** — 3D hero (rotating cube avatar, particle canvas, mouse parallax, typing
   animation, animated counters), glassmorphism sticky nav, 3D flip‑card work grid, interactive
-  **skills orbital sphere**, about + contact sections, dark/light toggle, language selector.
+  **skills orbital sphere**, about + contact sections, dark/light toggle, and a full **language picker** (Basic + All / medium-mostly-used languages, searchable, persisted in `localStorage` and applied to `<html lang>`).
 - **Auth** — Email/Password, Google login (Firebase) and Owner login. Sign up, log in,
   forgot‑password, session persistence, blocked‑user check.
 - **User Panel** — Overview, editable Profile (avatar/info/change password), My Orders table with

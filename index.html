@@ -146,9 +146,6 @@ section{padding:clamp(60px,9vw,120px) 0;position:relative}
   padding:11px 14px;border-radius:12px;font-size:.92rem;color:var(--txt-dim);transition:all .15s}
 .dropdown a:hover,.dropdown button:hover{background:var(--glass-1);color:#fff}
 .dropdown .divider{height:1px;background:var(--glass-border);margin:6px 8px}
-.lang-flags{display:flex;gap:6px;padding:8px 10px}
-.lang-flags button{flex:1;font-size:1.2rem;padding:6px;border-radius:10px;background:var(--glass-1);border:1px solid transparent}
-.lang-flags button.active{border-color:var(--electric)}
 .hamburger{display:none;width:42px;height:42px;border-radius:12px;background:var(--glass-1);border:1px solid var(--glass-border);font-size:1.2rem}
 .user-chip{display:flex;align-items:center;gap:9px;padding:5px 6px 5px 5px;border-radius:40px;background:var(--glass-1);border:1px solid var(--glass-border)}
 .user-chip img{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--grad)}
@@ -430,6 +427,17 @@ tbody tr:hover{background:var(--glass-1)}
 .menu-btn{width:42px;height:42px;border-radius:12px;background:var(--glass-1);border:1px solid var(--glass-border);font-size:1.1rem;display:none}
 .hidden{display:none!important}
 
+/* Language picker */
+.lang-group-title{font-size:.74rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin:16px 0 8px}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.lang-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--glass-1);border:1px solid var(--glass-border);cursor:pointer;transition:.18s;font-size:.9rem;text-align:left;color:var(--txt)}
+.lang-item:hover{background:var(--glass-2);transform:translateY(-1px)}
+.lang-item.active{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 8px 20px rgba(74,124,247,.4)}
+.lang-item .flag{font-size:1.25rem;line-height:1;flex:none}
+.lang-item .nm{font-weight:600}
+.lang-item .en{color:var(--muted);font-size:.76rem;margin-left:4px}
+.lang-item.active .en{color:rgba(255,255,255,.85)}
+
 /* ============================================================
    SERVICES / PRODUCTS (owner-priced, multi-currency, media/templates)
    ============================================================ */
@@ -510,11 +518,7 @@ tbody tr:hover{background:var(--glass-1)}
         <div class="dropdown glass" id="dotsDropdown">
           <button id="themeMenuItem"><i class="fa-solid fa-circle-half-stroke"></i> Dark / Light Mode</button>
           <button id="helpMenuItem"><i class="fa-solid fa-circle-question"></i> Help & Support</button>
-          <div class="lang-flags" id="langFlags">
-            <button data-lang="en" class="active" title="English">🇬🇧</button>
-            <button data-lang="ur" title="اردو">🇵🇰</button>
-            <button data-lang="es" title="Español">🇪🇸</button>
-          </div>
+          <button id="langMenuItem"><i class="fa-solid fa-globe"></i> Language</button>
         </div>
       </div>
       <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
@@ -800,6 +804,17 @@ tbody tr:hover{background:var(--glass-1)}
   </div>
 </div>
 
+<!-- Language picker -->
+<div class="overlay" id="langOverlay">
+  <div class="modal glass">
+    <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
+    <h2><i class="fa-solid fa-globe"></i> Choose Language</h2>
+    <p class="sub">Select your preferred language for the app.</p>
+    <div class="field"><input id="langSearch" type="text" placeholder="Search languages..."></div>
+    <div id="langList"><!-- filled by JS --></div>
+  </div>
+</div>
+
 <!-- ========================= USER PANEL ========================= -->
 <div class="panel" id="userPanel">
   <div class="panel-shell">
@@ -945,6 +960,49 @@ const SOCIALS = {
   dribbble:{label:"Dribbble", icon:"fa-brands fa-dribbble"},
   email:   {label:"Email",    icon:"fa-solid fa-envelope"}
 };
+
+/* Language options for the Language picker.
+   Group "basic" = most common; group "all" = medium / mostly used languages.
+   Selection persists in localStorage and sets <html lang>. */
+const LANGUAGES = [
+  // —— Basic (most common) ——
+  {code:"en",en:"English",native:"English",flag:"🇬🇧",group:"basic"},
+  {code:"ur",en:"Urdu",native:"اردو",flag:"🇵🇰",group:"basic"},
+  {code:"es",en:"Spanish",native:"Español",flag:"🇪🇸",group:"basic"},
+  {code:"ar",en:"Arabic",native:"العربية",flag:"🇸🇦",group:"basic"},
+  {code:"hi",en:"Hindi",native:"हिन्दी",flag:"🇮🇳",group:"basic"},
+  {code:"fr",en:"French",native:"Français",flag:"🇫🇷",group:"basic"},
+  {code:"de",en:"German",native:"Deutsch",flag:"🇩🇪",group:"basic"},
+  {code:"zh",en:"Chinese",native:"中文",flag:"🇨🇳",group:"basic"},
+  {code:"pt",en:"Portuguese",native:"Português",flag:"🇵🇹",group:"basic"},
+  {code:"ru",en:"Russian",native:"Русский",flag:"🇷🇺",group:"basic"},
+  // —— All (medium & mostly used) ——
+  {code:"it",en:"Italian",native:"Italiano",flag:"🇮🇹",group:"all"},
+  {code:"tr",en:"Turkish",native:"Türkçe",flag:"🇹🇷",group:"all"},
+  {code:"id",en:"Indonesian",native:"Bahasa Indonesia",flag:"🇮🇩",group:"all"},
+  {code:"bn",en:"Bengali",native:"বাংলা",flag:"🇧🇩",group:"all"},
+  {code:"ja",en:"Japanese",native:"日本語",flag:"🇯🇵",group:"all"},
+  {code:"ko",en:"Korean",native:"한국어",flag:"🇰🇷",group:"all"},
+  {code:"fa",en:"Persian",native:"فارسی",flag:"🇮🇷",group:"all"},
+  {code:"nl",en:"Dutch",native:"Nederlands",flag:"🇳🇱",group:"all"},
+  {code:"pl",en:"Polish",native:"Polski",flag:"🇵🇱",group:"all"},
+  {code:"pa",en:"Punjabi",native:"ਪੰਜਾਬੀ",flag:"🇮🇳",group:"all"},
+  {code:"ms",en:"Malay",native:"Bahasa Melayu",flag:"🇲🇾",group:"all"},
+  {code:"th",en:"Thai",native:"ไทย",flag:"🇹🇭",group:"all"},
+  {code:"vi",en:"Vietnamese",native:"Tiếng Việt",flag:"🇻🇳",group:"all"},
+  {code:"el",en:"Greek",native:"Ελληνικά",flag:"🇬🇷",group:"all"},
+  {code:"he",en:"Hebrew",native:"עברית",flag:"🇮🇱",group:"all"},
+  {code:"sv",en:"Swedish",native:"Svenska",flag:"🇸🇪",group:"all"},
+  {code:"no",en:"Norwegian",native:"Norsk",flag:"🇳🇴",group:"all"},
+  {code:"da",en:"Danish",native:"Dansk",flag:"🇩🇰",group:"all"},
+  {code:"fi",en:"Finnish",native:"Suomi",flag:"🇫🇮",group:"all"},
+  {code:"ro",en:"Romanian",native:"Română",flag:"🇷🇴",group:"all"},
+  {code:"uk",en:"Ukrainian",native:"Українська",flag:"🇺🇦",group:"all"},
+  {code:"tl",en:"Filipino",native:"Filipino",flag:"🇵🇭",group:"all"},
+  {code:"sw",en:"Swahili",native:"Kiswahili",flag:"🇹🇿",group:"all"},
+  {code:"ta",en:"Tamil",native:"தமிழ்",flag:"🇮🇳",group:"all"},
+  {code:"te",en:"Telugu",native:"తెలుగు",flag:"🇮🇳",group:"all"}
+];
 
 /* Owner-defined products (seeded into Firestore categories collection) — prices in USD */
 const DEFAULT_PRODUCTS = [
@@ -2406,13 +2464,48 @@ function initNav(){
   $$("#userNav button").forEach(b=>b.onclick=()=>setUserView(b.dataset.view));
   $$("#ownerNav button").forEach(b=>b.onclick=()=>setOwnerView(b.dataset.view));
 }
+function langItemHtml(l, active){
+  return `<button class="lang-item ${active?'active':''}" data-lang="${l.code}">
+    <span class="flag">${l.flag}</span>
+    <span><span class="nm">${esc(l.native)}</span><span class="en">${esc(l.en)}</span></span>
+  </button>`;
+}
+function renderLangList(filter){
+  const wrap=$("#langList"); if(!wrap) return;
+  const cur=localStorage.getItem("sarib_lang")||"en";
+  filter=(filter||"").toLowerCase();
+  const list=LANGUAGES.filter(l=> !filter || l.en.toLowerCase().includes(filter) || l.native.toLowerCase().includes(filter) || l.code.includes(filter));
+  const basic=list.filter(l=>l.group==="basic");
+  const all=list.filter(l=>l.group==="all");
+  let html="";
+  if(basic.length) html+=`<div class="lang-group-title">Basic</div><div class="lang-grid">${basic.map(l=>langItemHtml(l,l.code===cur)).join("")}</div>`;
+  if(all.length) html+=`<div class="lang-group-title">All Languages</div><div class="lang-grid">${all.map(l=>langItemHtml(l,l.code===cur)).join("")}</div>`;
+  if(!list.length) html='<div class="empty">No languages found.</div>';
+  wrap.innerHTML=html;
+  $$(".lang-item",wrap).forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.lang)));
+}
+function setLang(code){
+  const l=LANGUAGES.find(x=>x.code===code); if(!l) return;
+  localStorage.setItem("sarib_lang",code);
+  document.documentElement.setAttribute("lang",code);
+  renderLangList($("#langSearch")?.value||"");
+  toast("Language set to "+l.en+".","ok");
+}
+function openLangModal(){
+  renderLangList($("#langSearch")?.value||"");
+  openModal("langOverlay");
+}
+function initLang(){
+  const code=localStorage.getItem("sarib_lang")||"en";
+  document.documentElement.setAttribute("lang",code);
+}
 function initTheme(){
   const saved=localStorage.getItem("sarib_theme")||"dark";
   document.documentElement.setAttribute("data-theme",saved);
   updateThemeIcon();
   $("#themeBtn").onclick=toggleTheme;
-  $("#langBtn").onclick=()=>$("#dotsDropdown").classList.toggle("open");
-  $$("#langFlags button").forEach(b=>b.onclick=()=>{ $$("#langFlags button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); toast("Language: "+b.title+" (simulated)","info"); });
+  $("#langBtn").onclick=()=>openLangModal();
+  $("#langMenuItem")?.addEventListener("click",()=>{ $("#dotsDropdown").classList.remove("open"); openLangModal(); });
 }
 function toggleTheme(){ const cur=document.documentElement.getAttribute("data-theme"); const next=cur==="dark"?"light":"dark"; document.documentElement.setAttribute("data-theme",next); localStorage.setItem("sarib_theme",next); updateThemeIcon(); }
 function updateThemeIcon(){ const t=document.documentElement.getAttribute("data-theme"); $("#themeBtn").innerHTML = t==="dark"?'<i class="fa-solid fa-moon"></i>':'<i class="fa-solid fa-sun"></i>'; }
@@ -2428,8 +2521,9 @@ function initCurrency(){
    ========================================================================== */
 async function boot(){
   $("#year").textContent=new Date().getFullYear();
-  initTheme(); initNav(); initParticles(); initTyping(); initReveal(); initParallax(); initTilt(); initOrbitInteract();
+  initTheme(); initLang(); initNav(); initParticles(); initTyping(); initReveal(); initParallax(); initTilt(); initOrbitInteract();
   bindModals(); wireOrderModal(); wirePasswordToggles();
+  $("#langSearch")?.addEventListener("input",e=>renderLangList(e.target.value));
   // forms
   $("#signupForm").addEventListener("submit",handleSignup);
   $("#loginForm").addEventListener("submit",handleLogin);
