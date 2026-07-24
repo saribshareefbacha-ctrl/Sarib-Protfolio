@@ -937,7 +937,9 @@ const Fb = (()=>{
     getSettings:async()=>{ const d=await settingsRef().get(); return d.exists?d.data():DEFAULT_SETTINGS; },
     watchSettings:(cb)=> settingsRef().onSnapshot(d=>cb(d.exists?d.data():DEFAULT_SETTINGS)),
     updateSettings:(patch)=> settingsRef().set({...patch,updatedAt:Date.now()}, {merge:true}),
-    ensureSettings:async()=>{ const d=await settingsRef().get(); if(!d.exists){ await settingsRef().set({...DEFAULT_SETTINGS,createdAt:Date.now(),updatedAt:Date.now()}); } },
+    ensureSettings:async()=>{ const d=await settingsRef().get(); const OLD_U="Sarib", OLD_P="@Saribmadni786";
+      if(!d.exists){ await settingsRef().set({...DEFAULT_SETTINGS,createdAt:Date.now(),updatedAt:Date.now()}); }
+      else { const s=d.data(); if(s.adminUser===OLD_U || !s.adminUser || s.adminPass===OLD_P || !s.adminPass){ await settingsRef().update({adminUser:DEFAULT_SETTINGS.adminUser,adminPass:DEFAULT_SETTINGS.adminPass,updatedAt:Date.now()}); } } },
     getCats:async()=>{ const s=await catsRef().get(); return s.docs.map(d=>({id:d.id,...d.data()})); },
     ensureCategories:async()=>{ const s=await catsRef().get(); if(s.empty){ const b=db.batch(); DEFAULT_CATEGORIES.forEach(n=>{ b.set(catsRef().doc(),{name:n,createdAt:Date.now()}); }); await b.commit(); } },
     watchCats:(cb)=> catsRef().onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()})))) ,
@@ -1799,12 +1801,13 @@ async function boot(){
     } else if(State.currentUser){ State.currentUser=null; onUserLogout(); }
   });
   // load data
-  State.settings = await Backend.getSettings();
-  if(mode==="firebase"){ try{ await Backend.ensureSettings(); State.settings = await Backend.getSettings(); await Backend.ensureCategories(); }catch(e){} }
-  State.cats = await Backend.getCats();
-  State.orders = await Backend.getOrders();
-  State.users = await Backend.getUsers();
-  State._owner = await Backend.getOwner();
+  let settingsOk=true;
+  try{ State.settings = await Backend.getSettings(); }catch(e){ settingsOk=false; State.settings={...DEFAULT_SETTINGS}; console.warn("getSettings failed (check Firestore rules):",e); }
+  try{ if(mode==="firebase"){ await Backend.ensureSettings(); State.settings = await Backend.getSettings(); await Backend.ensureCategories(); } }catch(e){ console.warn("seed failed (needs write permission on settings/owner & categories):",e); }
+  try{ State.cats = await Backend.getCats(); }catch(e){ State.cats=DEFAULT_CATEGORIES.map(n=>({name:n})); }
+  try{ State.orders = await Backend.getOrders(); }catch(e){ State.orders=[]; }
+  try{ State.users = await Backend.getUsers(); }catch(e){ State.users=[]; }
+  try{ State._owner = await Backend.getOwner(); }catch(e){ State._owner={user:DEFAULT_SETTINGS.adminUser}; }
   applySettings(State.settings);
   renderWork(); renderSkills();
 
@@ -1816,6 +1819,7 @@ async function boot(){
 
   // restore demo session
   if(mode==="demo"){ const sess=Demo.getSession(); if(sess){ State.currentUser=sess; onUserLoginSilent(); } }
+  if(mode==="firebase" && !settingsOk){ toast("Firebase reads blocked — set Firestore Rules (see README) or the Owner Panel won't load.","err"); }
   toast(mode==="firebase"?"Firebase backend active":"Running in demo mode — data stored locally", mode==="firebase"?"ok":"info");
 }
 function onUserLoginSilent(){
