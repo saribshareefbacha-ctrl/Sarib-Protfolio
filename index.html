@@ -790,6 +790,16 @@ tbody tr:hover{background:var(--glass-1)}
   <div class="modal glass wide" id="detailModal"><!-- filled --></div>
 </div>
 
+<!-- Fast service opt-in (user, after placing an order) -->
+<div class="overlay" id="fastOverlay">
+  <div class="modal glass">
+    <button class="close" data-close><i class="fa-solid fa-xmark"></i></button>
+    <h2><i class="fa-solid fa-bolt"></i> Priority / Fast Service?</h2>
+    <p class="sub">Do you want your order to be done fast?</p>
+    <div id="fastBody"><!-- filled by JS --></div>
+  </div>
+</div>
+
 <!-- ========================= USER PANEL ========================= -->
 <div class="panel" id="userPanel">
   <div class="panel-shell">
@@ -873,6 +883,8 @@ const DEFAULT_SETTINGS = {
   adminPass: "sarib123",
   avatar: "",            // owner profile image (dataURL or URL) — shown in Owner Panel
   logo: "",              // site logo / favicon (dataURL or URL) — navbar + browser tab
+  fastWa: "",            // WhatsApp number that receives FAST / priority orders (owner-specified)
+  fastFee: 0,            // extra charge (USD) for the fast / priority service, defined by owner
   socials: [             // owner-provided social profiles (only those with a url are shown)
     {key:"github",url:""},{key:"linkedin",url:""},{key:"youtube",url:""},
     {key:"instagram",url:""},{key:"tiktok",url:""},{key:"twitter",url:""},
@@ -1508,7 +1520,7 @@ function userHome(u){
 }
 function orderTableMini(arr){
   return `<div class="table-wrap"><table><thead><tr><th>Order ID</th><th>Category</th><th>Date</th><th>Status</th></tr></thead><tbody>
-    ${arr.map(o=>`<tr><td>${esc(o.orderId)}</td><td>${esc(o.category)}</td><td>${fmtDate(o.date||o.createdAt)}</td><td><span class="badge ${o.status}">${cap(o.status)}</span></td></tr>`).join("")}
+    ${arr.map(o=>`<tr><td>${o.fast?'<span style="color:var(--warn)" title="Fast / priority order">⚡</span> ':''}${esc(o.orderId)}</td><td>${esc(o.category)}</td><td>${fmtDate(o.date||o.createdAt)}</td><td><span class="badge ${o.status}">${cap(o.status)}</span></td></tr>`).join("")}
   </tbody></table></div>`;
 }
 function cap(s){ return s? s.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):''; }
@@ -1672,18 +1684,62 @@ function wireOrderModal(){
       date:new Date().toISOString().slice(0,19).replace("T"," "), userId:State.currentUser.id
     };
     const saved=await Backend.addOrder(o);
-    // notify owner
+    // notify owner by email (always)
     const msg=`New Order ${saved.orderId}\nCategory: ${o.category}\nCustomer: ${o.customer} (${o.email})\nBrief: ${o.description}`;
     window.open(mailLink(State.settings.email,"New Order "+saved.orderId,msg),"_blank");
-    window.open(waLink(State.settings.phone,msg),"_blank");
     b.disabled=false; b.innerHTML='<span id="orderSubmitTxt">Submit Order</span> <i class="fa-solid fa-paper-plane"></i>';
-    closeModal($("#orderOverlay")); toast("Order placed! Owner notified. 🚀","ok");
+    closeModal($("#orderOverlay"));
+    // offer fast / priority service (sends order to admin on WhatsApp if accepted)
+    showFastModal(saved);
     if($("#userPanel").classList.contains("open")) setUserView("u-orders");
   });
 }
 function handleOrderFiles(files){
   State.orderFiles=[...State.orderFiles,...[...files]];
   $("#orderFileList").innerHTML = State.orderFiles.map(f=>`<div><i class="fa-solid fa-paperclip"></i> ${esc(f.name)}</div>`).join("");
+}
+/* Build the WhatsApp message sent to the admin for a FAST / priority order. */
+function fastOrderMsg(o, fee){
+  return `🚀 *FAST / PRIORITY ORDER* 🚀
+Order ID: ${o.orderId}
+Service: ${o.category}
+Customer: ${o.customer} (@${o.username})
+Email: ${o.email}
+Phone: ${o.phone||"-"}
+Fast fee: ${formatPrice(fee,"USD")}
+Status: Pending (priority)
+Brief: ${o.description}
+${o.attachments&&o.attachments.length?("Attachments: "+o.attachments.join(", ")):""}`;
+}
+/* After an order is placed, ask the user if they want it done fast.
+   "Yes" sends the full order to the owner-specified WhatsApp number and marks it fast. */
+function showFastModal(order){
+  const fee = State.settings.fastFee||0;
+  const num = State.settings.fastWa ? State.settings.fastWa : State.settings.phone;
+  const m=$("#fastOverlay");
+  $("#fastBody").innerHTML = `
+    <div class="glass-sm" style="padding:16px;margin-bottom:18px;border:1px solid var(--glass-border)">
+      <div style="display:flex;gap:10px;align-items:center;font-weight:700;margin-bottom:6px"><i class="fa-solid fa-truck-fast" style="color:var(--electric)"></i> Fast service = extra ${formatPrice(fee,State.currency||"USD")}</div>
+      <p style="color:var(--muted);font-size:.88rem">Get priority handling. Your order <b>${esc(order.orderId)}</b> will be sent directly to the admin on WhatsApp with your name, order ID and full brief.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="fastYes"><i class="fa-solid fa-paper-plane"></i> Yes, send via WhatsApp</button>
+      <button class="btn ghost" id="fastNo">No, standard delivery</button>
+    </div>`;
+  openModal("fastOverlay");
+  $("#fastYes").onclick = async ()=>{
+    await Backend.updateOrder(order.id,{fast:true, fastFee:fee});
+    if(!State.orders.find(x=>x.id===order.id)) State.orders.unshift({...order,fast:true,fastFee:fee});
+    window.open(waLink(num, fastOrderMsg(order, fee)), "_blank");
+    closeModal(m);
+    toast("Fast order sent to admin via WhatsApp! 🚀","ok");
+  };
+  $("#fastNo").onclick = ()=>{
+    const msg=`New Order ${order.orderId}\nCategory: ${order.category}\nCustomer: ${order.customer} (${order.email})\nBrief: ${order.description}`;
+    window.open(waLink(State.settings.phone, msg), "_blank");
+    closeModal(m);
+    toast("Order placed! Owner notified. 🚀","ok");
+  };
 }
 function showOrderDetail(id){
   const o=State.orders.find(x=>x.id===id); if(!o) return;
@@ -1698,6 +1754,7 @@ function showOrderDetail(id){
       <tr><th>Category</th><td>${esc(o.category)}</td></tr>
       <tr><th>Date</th><td>${fmtDate(o.date||o.createdAt)}</td></tr>
       <tr><th>Status</th><td><span class="badge ${o.status}">${cap(o.status)}</span></td></tr>
+      ${o.fast?`<tr><th>Fast / Priority</th><td><span style="color:var(--warn);font-weight:700">⚡ Yes</span> · Extra ${formatPrice(o.fastFee||0,"USD")}</td></tr>`:""}
       <tr><th>Brief</th><td>${esc(o.description)}</td></tr>
       ${o.attachments&&o.attachments.length?`<tr><th>Files</th><td>${o.attachments.map(esc).join(", ")}</td></tr>`:""}
     </table></div>`;
@@ -1816,6 +1873,17 @@ function ownerProfile(){
       ${sectionFieldsHtml("services", s.sections?.services||DEFAULT_SETTINGS.sections.services)}
       <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Section Headings</button>
     </form>
+  </div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-bolt"></i> Fast Service (Priority Orders)</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px">When a user places an order they'll be offered priority handling for an extra fee. If they accept, their order is sent straight to your WhatsApp with all the details.</p>
+    <form id="fastForm">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Fast Service WhatsApp Number</label><input name="fastWa" placeholder="923001234567" value="${esc(s.fastWa||'')}"></div>
+        <div class="field" style="flex:1;margin:0"><label>Extra Fee (USD)</label><input name="fastFee" type="number" min="0" step="0.01" placeholder="20" value="${s.fastFee||0}"></div>
+      </div>
+      <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Fast Service Settings</button>
+    </form>
   </div>`;
 }
 function sectionFieldsHtml(key,obj){
@@ -1891,7 +1959,7 @@ function renderOrdersTable(){
     (!st || o.status===st));
   const body=$("#ordersBody"); if(!body) return;
   body.innerHTML = rows.length? rows.map(o=>`<tr>
-    <td>${esc(o.orderId)}</td><td>${esc(o.customer)}</td><td>${esc(o.username)}</td><td>${esc(o.email)}</td>
+    <td>${o.fast?'<span style="color:var(--warn)" title="Fast / priority order">⚡</span> ':''}${esc(o.orderId)}</td><td>${esc(o.customer)}</td><td>${esc(o.username)}</td><td>${esc(o.email)}</td>
     <td>${esc(o.category)}</td><td>${fmtDate(o.date||o.createdAt)}</td>
     <td><select class="ostatus" data-id="${o.id}" style="padding:6px 10px;border-radius:8px;background:var(--glass-1);border:1px solid var(--glass-border);color:var(--txt)">
       ${["pending","in-progress","completed","cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}
@@ -2197,11 +2265,17 @@ function wireOwnerView(view){
       State.settings.sections=sections; applySections();
       toast("Section headings saved — live on public page!","ok");
     });
+    $("#fastForm")?.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target);
+      const fastWa=(fd.get("fastWa")||"").trim(); const fastFee=parseFloat(fd.get("fastFee"))||0;
+      await Backend.updateSettings({fastWa, fastFee});
+      State.settings.fastWa=fastWa; State.settings.fastFee=fastFee;
+      toast("Fast service settings saved.","ok");
+    });
     $("#previewSite").addEventListener("click",startOwnerPreview);
     $("#seedSite")?.addEventListener("click",async()=>{ if(confirm("Reset all site content to defaults? Your current text will be overwritten.")){ await Backend.updateSettings({...DEFAULT_SETTINGS,updatedAt:Date.now()}); applySettings({...State.settings,...DEFAULT_SETTINGS}); toast("Site data seeded.","ok"); } });
   }
   if(view==="o-orders"){ renderOrdersTable(); $("#oSearch")?.addEventListener("input",renderOrdersTable); $("#oStatus")?.addEventListener("change",renderOrdersTable);
-    $("#exportOrders")?.addEventListener("click",()=>exportCSV(State.orders.map(o=>({id:o.orderId,customer:o.customer,email:o.email,category:o.category,status:o.status,date:o.date||o.createdAt})),"orders.csv"));
+    $("#exportOrders")?.addEventListener("click",()=>exportCSV(State.orders.map(o=>({id:o.orderId,customer:o.customer,email:o.email,category:o.category,status:o.status,fast:o.fast?"yes":"no",fast_fee_usd:o.fastFee||"",date:o.date||o.createdAt})),"orders.csv"));
   }
   if(view==="o-users"){ renderUsersTable(); $("#uSearch")?.addEventListener("input",renderUsersTable); $("#uStatus")?.addEventListener("change",renderUsersTable);
     $("#exportUsers")?.addEventListener("click",()=>exportCSV(State.users.map(u=>({name:u.name,username:u.username,email:u.email,phone:u.phone,status:u.status,joined:fmtDate(u.createdAt)})),"users.csv"));

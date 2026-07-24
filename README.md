@@ -16,10 +16,13 @@ authentication and real‑time data sync.
   Settings (delete account / logout).
 - **Owner Panel** — Dashboard stats, Site Settings (live edits to site text, **owner profile image**, **site logo / favicon**, **social profile links**, and the
   **three main section headings** — eyebrow / title / gradient-accent word / subtitle for **Work ("Crafted with Precision")**, **Skills ("Skills in Orbit")** and **Services ("What I Offer")**),
-  Order Management (search/filter/status/update/delete/notify), User Management
+  **Fast Service** (owner sets a dedicated WhatsApp number + extra USD fee; after a user places an order they're asked "Do you want your order done fast?" and, if yes, the full order is sent straight to that admin WhatsApp), Order
+  Management (search/filter/status/update/delete/notify — fast orders show a ⚡ marker + fee), User Management
   (block/unblock/delete/email/export CSV), **Products & Pricing** (owner-managed services with
   USD prices, optional image/video sample upload OR auto "use custom template" visual per
   service), **Portfolio** (owner-managed Work projects — title, category, image/gradient, demo & case URLs, stack; renders the 3D flip-card grid), **Skills** (owner-managed skills — name, category, Font Awesome icon, level %; feeds the orbital sphere and bars), Owner Credentials.
+
+> **Editable branding:** the **owner profile image** (shown in the Owner Panel) and the **site logo / browser-tab favicon** are both uploaded/edited in *Site Settings* and update live across the navbar, panel and browser tab.
 - **Public Services section** — every owner-defined product is shown on the landing page with its
   price, converted live across multiple currencies (default **USD**), and a "Order Now" button.
 - **Real‑time sync** — Owner changes (profile, categories, order status, blocking) instantly
@@ -40,7 +43,8 @@ the `<script>`, paste your Firebase web config into `FIREBASE_CONFIG`, and set `
 Also create a **Firestore** database with these collections/documents:
 
 ```
-settings/owner        → { name, cast, exp, desc, phone, email, location, adminUser, adminPass, avatar, logo, socials[], createdAt, updatedAt }
+settings/owner        → { name, cast, exp, desc, phone, email, location, adminUser, adminPass, avatar, logo, fastWa, fastFee, socials[], sections{}, createdAt, updatedAt }
+                        (avatar = owner profile image; logo = site logo / favicon; fastWa = WhatsApp number for priority orders; fastFee = extra USD charge for fast service)
 users/{userId}        → { name, username, email, phone, status, avatar, createdAt, updatedAt }
 orders/{orderId}      → { orderId, customer, username, email, phone, category, description, attachments[], status, date, userId, createdAt, updatedAt }
 categories/{catId}    → { name, price, desc, kw, useTemplate, media, mediaType, createdAt }
