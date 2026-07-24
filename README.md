@@ -16,15 +16,23 @@ authentication and real‑time data sync.
   Settings (delete account / logout).
 - **Owner Panel** — Dashboard stats, Site Settings (live edits to the public site), Order
   Management (search/filter/status/update/delete/notify), User Management
-  (block/unblock/delete/email/export CSV), Category Management, Owner Credentials.
+  (block/unblock/delete/email/export CSV), **Products & Pricing** (owner-managed services with
+  USD prices, optional image/video sample upload OR auto "use custom template" visual per
+  service), Owner Credentials.
+- **Public Services section** — every owner-defined product is shown on the landing page with its
+  price, converted live across multiple currencies (default **USD**), and a "Order Now" button.
 - **Real‑time sync** — Owner changes (profile, categories, order status, blocking) instantly
   reflect on the public site and user panel.
 
 ## 🚀 Running it
 
 **Demo mode (no setup, works immediately):** just open `index.html` in a browser. All data is
-stored in `localStorage` and synced in real‑time within the same browser. Default owner login:
-**`Sarib` / `@Saribmadni786`**.
+stored in `localStorage` and synced in real‑time within the same browser.
+
+**Owner login (shared screen):** the owner logs in through the *same* "Email or Username"
+login field as regular users — there is no separate owner button. Use the credentials stored in
+`settings/owner` (default **`sarib` / `sarib123`**). Signing in with the Google account
+**`saribshareefbacha@gmail.com`** also routes straight to the Owner Panel.
 
 **Firebase mode (production):** open `index.html`, scroll to the `CONFIG` block near the top of
 the `<script>`, paste your Firebase web config into `FIREBASE_CONFIG`, and set `USE_FIREBASE = true`.
@@ -34,7 +42,8 @@ Also create a **Firestore** database with these collections/documents:
 settings/owner        → { name, cast, exp, desc, phone, email, location, adminUser, adminPass, createdAt, updatedAt }
 users/{userId}        → { name, username, email, phone, status, avatar, createdAt, updatedAt }
 orders/{orderId}      → { orderId, customer, username, email, phone, category, description, attachments[], status, date, userId, createdAt, updatedAt }
-categories/{catId}    → { name, createdAt }
+categories/{catId}    → { name, price, desc, kw, useTemplate, media, mediaType, createdAt }
+                        (price is stored in USD; media is a data-URL when uploaded via the panel)
 ```
 
 > **Important — security model.** In this build the **Owner is NOT a Firebase Auth user**
@@ -84,10 +93,16 @@ sign in with Firebase Auth instead of the client-side password compare.
 
 ## 🎨 Customizing the public site
 
-Edit the `DEFAULT_SETTINGS`, `DEFAULT_CATEGORIES`, `SKILLS`, and `PROJECTS` constants at the top
-of the script, or — once logged in as Owner — use **Site Settings** in the Owner Panel for live
-updates (name, title, bio, phone, email, location). The WhatsApp/email buttons are generated
-automatically from the owner phone/email.
+Edit the `DEFAULT_SETTINGS`, `DEFAULT_PRODUCTS` (owner services + USD prices), `CURRENCIES`
+(exchange rates/symbols), `SKILLS`, and `PROJECTS` constants at the top of the script, or — once
+logged in as Owner — use **Site Settings** for live text edits and **Products & Pricing** to add
+/ edit services (name, USD price, description, image/video sample upload, or "use custom
+template"), and **Owner Credentials** to change the owner username/password. The WhatsApp/email
+buttons are generated automatically from the owner phone/email.
+
+The app is resilient: if Firestore reads are blocked by security rules it falls back to the
+default data in memory and shows a red toast prompting you to fix the rules (see above), so the
+public site still renders.
 
 ## 🛠 Tech notes
 

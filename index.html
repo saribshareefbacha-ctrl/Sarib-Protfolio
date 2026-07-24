@@ -424,6 +424,40 @@ tbody tr:hover{background:var(--glass-1)}
 @media(min-width:769px){.panel-top .menu-btn{display:none}}
 .menu-btn{width:42px;height:42px;border-radius:12px;background:var(--glass-1);border:1px solid var(--glass-border);font-size:1.1rem;display:none}
 .hidden{display:none!important}
+
+/* ============================================================
+   SERVICES / PRODUCTS (owner-priced, multi-currency, media/templates)
+   ============================================================ */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:26px;margin-top:20px}
+.service-card{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.service-media{height:185px;position:relative;overflow:hidden;background:var(--glass-1)}
+.service-media img,.service-media video{width:100%;height:100%;object-fit:cover;display:block}
+.service-body{padding:22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.service-body h3{font-size:1.25rem;font-weight:800}
+.service-body .price{font-size:1.55rem;font-weight:800;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.service-body p{color:var(--muted);font-size:.9rem}
+.service-body .btn{margin-top:auto}
+.tpl{width:100%;height:100%;display:grid;place-items:center;position:relative;color:#fff}
+.tpl i{font-size:3rem;opacity:.92}
+.tpl span{position:absolute;bottom:10px;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.tpl-play{position:absolute;width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.45);display:grid;place-items:center;font-size:1.3rem;backdrop-filter:blur(4px);animation:pulse 2.2s ease-in-out infinite}
+.tpl-video{background:linear-gradient(135deg,#1e3a8a,#7c5cfc)}
+.tpl-logo{background:linear-gradient(135deg,#4a7cf7,#22d3ee)}
+.tpl-3d{background:linear-gradient(135deg,#7c5cfc,#f0abfc)}
+.tpl-photo{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.tpl-voice{background:linear-gradient(135deg,#22d3ee,#4a7cf7)}
+.tpl-social{background:linear-gradient(135deg,#ec4899,#8b5cf6)}
+.tpl-web{background:linear-gradient(135deg,#0ea5e9,#1e3a8a)}
+.tpl-app{background:linear-gradient(135deg,#10b981,#0ea5e9)}
+.tpl-ui{background:linear-gradient(135deg,#8b5cf6,#ec4899)}
+.tpl-auto{background:linear-gradient(135deg,#f43f5e,#f59e0b)}
+.tpl-api{background:linear-gradient(135deg,#6366f1,#22d3ee)}
+.tpl-deploy{background:linear-gradient(135deg,#14b8a6,#6366f1)}
+.tpl-default{background:linear-gradient(135deg,#4a7cf7,#7c5cfc)}
+.currency-sel{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:40px;background:var(--glass-1);border:1px solid var(--glass-border);color:var(--txt);outline:none;font-weight:600;font-size:.85rem}
+.currency-sel select{background:transparent;border:none;color:var(--txt);outline:none;font-weight:700;font-size:.85rem;cursor:pointer}
+.chip b{font-weight:800}
+.chip .fa-pen{color:var(--electric)}
 </style>
 </head>
 <body>
@@ -439,6 +473,7 @@ tbody tr:hover{background:var(--glass-1)}
     <div class="nav-links" id="navLinks">
       <a href="#work">Work</a>
       <a href="#skills">Skills</a>
+      <a href="#services">Services</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
     </div>
@@ -542,6 +577,32 @@ tbody tr:hover{background:var(--glass-1)}
       </div>
       <div class="skills-list" id="skillsList"><!-- rows injected --></div>
     </div>
+  </div>
+</section>
+
+<!-- ========================= SERVICES / PRICING ========================= -->
+<section id="services">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Services &amp; Pricing</span>
+      <h2 class="section-title">What I <span class="grad-text">Offer</span></h2>
+      <p class="section-sub">Transparent pricing per service. Order in seconds — switch currency anytime (default USD).</p>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin:6px 0 0">
+      <label class="currency-sel">Currency
+        <select id="currencySel">
+          <option value="USD">USD $</option>
+          <option value="EUR">EUR €</option>
+          <option value="GBP">GBP £</option>
+          <option value="PKR">PKR ₨</option>
+          <option value="INR">INR ₹</option>
+          <option value="AED">AED</option>
+          <option value="CAD">CAD</option>
+          <option value="AUD">AUD</option>
+        </select>
+      </label>
+    </div>
+    <div class="services-grid" id="servicesGrid"><!-- rendered by JS --></div>
   </div>
 </section>
 
@@ -738,7 +799,7 @@ tbody tr:hover{background:var(--glass-1)}
         <button data-view="o-profile"><i class="fa-solid fa-sliders"></i> Site Settings</button>
         <button data-view="o-orders"><i class="fa-solid fa-bag-shopping"></i> Orders</button>
         <button data-view="o-users"><i class="fa-solid fa-users"></i> Users</button>
-        <button data-view="o-cats"><i class="fa-solid fa-layer-group"></i> Categories</button>
+        <button data-view="o-cats"><i class="fa-solid fa-layer-group"></i> Products</button>
         <button data-view="o-creds"><i class="fa-solid fa-key"></i> Credentials</button>
       </nav>
       <div class="side-foot">
@@ -821,6 +882,67 @@ const PROJECTS = [
   {t:"AI Voice Assistant",cat:"AI",img:"linear-gradient(135deg,#7c5cfc,#22d3ee)",stack:["Python","Whisper"],demo:"#",case:"#"}
 ];
 
+/* Owner-defined products (seeded into Firestore categories collection) — prices in USD */
+const DEFAULT_PRODUCTS = [
+  {name:"Logo & Brand Identity", price:80, kw:"logo"},
+  {name:"3D Modeling", price:150, kw:"3d"},
+  {name:"Video Editing", price:120, kw:"video"},
+  {name:"Photo Editing", price:60, kw:"photo"},
+  {name:"AI Voice", price:90, kw:"voice"},
+  {name:"Social Media Content", price:70, kw:"social"},
+  {name:"Full Stack Web", price:500, kw:"web"},
+  {name:"App Development", price:800, kw:"app"},
+  {name:"UI/UX Design", price:200, kw:"ui"},
+  {name:"Automation", price:150, kw:"auto"},
+  {name:"API Integration", price:180, kw:"api"},
+  {name:"Deployment", price:100, kw:"deploy"}
+];
+
+/* Multi-currency support — prices stored in USD, converted for display */
+const CURRENCIES = {
+  USD:{sym:'$',rate:1,dec:2}, EUR:{sym:'€',rate:0.92,dec:2}, GBP:{sym:'£',rate:0.79,dec:2},
+  PKR:{sym:'₨',rate:278,dec:0}, INR:{sym:'₹',rate:83,dec:0}, AED:{sym:'د.إ',rate:3.67,dec:2},
+  CAD:{sym:'C$',rate:1.36,dec:2}, AUD:{sym:'A$',rate:1.52,dec:2}
+};
+function formatPrice(usd,cur){ const c=CURRENCIES[cur]||CURRENCIES.USD; const v=(usd||0)*(c.rate||1); return c.sym+v.toLocaleString(undefined,{minimumFractionDigits:c.dec,maximumFractionDigits:c.dec}); }
+
+/* Auto template selection per service (used when owner picks "Use custom template") */
+function detectKw(name){ const n=String(name||"").toLowerCase();
+  if(/video|reel|cinematic|editing/.test(n)) return "video";
+  if(/logo|brand|identity/.test(n)) return "logo";
+  if(/3d|model/.test(n)) return "3d";
+  if(/photo|image|retouch/.test(n)) return "photo";
+  if(/voice|audio/.test(n)) return "voice";
+  if(/social|content/.test(n)) return "social";
+  if(/web|full.?stack|website/.test(n)) return "web";
+  if(/app|mobile/.test(n)) return "app";
+  if(/ui|ux|design/.test(n)) return "ui";
+  if(/autom|bot|script/.test(n)) return "auto";
+  if(/api|integration/.test(n)) return "api";
+  if(/deploy|devops|host/.test(n)) return "deploy";
+  return "default";
+}
+const TEMPLATES = [
+  {kw:"video",icon:"fa-film",label:"Sample Video"},{kw:"logo",icon:"fa-pen-nib",label:"Brand Sample"},
+  {kw:"3d",icon:"fa-cube",label:"3D Render"},{kw:"photo",icon:"fa-image",label:"Photo Edit"},
+  {kw:"voice",icon:"fa-microphone",label:"Voice Sample"},{kw:"social",icon:"fa-hashtag",label:"Social Post"},
+  {kw:"web",icon:"fa-code",label:"Web App"},{kw:"app",icon:"fa-mobile-screen",label:"Mobile App"},
+  {kw:"ui",icon:"fa-palette",label:"UI Design"},{kw:"auto",icon:"fa-robot",label:"Automation"},
+  {kw:"api",icon:"fa-plug",label:"API"},{kw:"deploy",icon:"fa-rocket",label:"Deploy"},
+  {kw:"default",icon:"fa-layer-group",label:"Sample"}
+];
+function templateHtml(c){ const kw=detectKw(c.kw||c.name); const t=TEMPLATES.find(t=>t.kw===kw)||TEMPLATES[TEMPLATES.length-1];
+  return `<div class="tpl tpl-${t.kw}"><i class="fa-solid ${t.icon}"></i>${t.kw==="video"?'<div class="tpl-play"><i class="fa-solid fa-play"></i></div>':""}<span>${t.label}</span></div>`; }
+function productMediaHtml(c){ if(c.useTemplate || !c.media) return templateHtml(c); if(c.mediaType==="video") return `<video src="${c.media}" autoplay muted loop playsinline></video>`; return `<img src="${c.media}" alt="${esc(c.name)}">`; }
+function renderServices(){ const grid=$("#servicesGrid"); if(!grid) return; const cur=State.currency||"USD"; const list=State.cats.length?State.cats:DEFAULT_PRODUCTS;
+  grid.innerHTML = list.map((c,i)=>{ const price=(c.price!=null)?formatPrice(c.price,cur):"Contact"; const media=productMediaHtml(c);
+    return `<div class="service-card glass reveal" style="transition-delay:${i*60}ms">
+      <div class="service-media">${media}</div>
+      <div class="service-body"><h3>${esc(c.name)}</h3><div class="price">${price}</div>${c.desc?`<p>${esc(c.desc)}</p>`:""}<button class="btn ghost" data-order="${esc(c.name)}">Order Now</button></div>
+    </div>`; }).join("");
+  $$("[data-order]",grid).forEach(b=>b.addEventListener("click",()=>{ State._preCat=b.dataset.order; if(!State.currentUser){ openModal("loginOverlay"); toast("Log in to place an order.","info"); } else openOrderModal(); }));
+}
+
 /* ============================================================================
    UTILITIES
    ========================================================================== */
@@ -856,7 +978,7 @@ const Demo = (()=>{
   const write = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
   function seed(){
     if(!read(K.s)) write(K.s, {...DEFAULT_SETTINGS, createdAt:Date.now(), updatedAt:Date.now()});
-    if(!read(K.c)) write(K.c, DEFAULT_CATEGORIES.map(n=>({id:uid(),name:n})));
+    if(!read(K.c)) write(K.c, DEFAULT_PRODUCTS.map(p=>({id:uid(),...p})));
     if(!read(K.u)) write(K.u, []);
     if(!read(K.o)) write(K.o, []);
     if(!read(K.ow)) write(K.ow, {user:DEFAULT_SETTINGS.adminUser, pass:DEFAULT_SETTINGS.adminPass});
@@ -867,7 +989,8 @@ const Demo = (()=>{
     updateSettings:(patch)=>{ const s={...read(K.s),...patch,updatedAt:Date.now()}; write(K.s,s); bus.emit("settings",s); return s; },
     watchSettings:(cb)=>bus.on("settings",cb),
     getCats:()=>read(K.c)||[],
-    addCat:(name)=>{ const c=read(K.c)||[]; const item={id:uid(),name}; c.push(item); write(K.c,c); bus.emit("cats",c); return item; },
+    addCat:(c)=>{ const arr=read(K.c)||[]; const item={id:uid(),...c}; arr.push(item); write(K.c,arr); bus.emit("cats",arr); return item; },
+    updateCat:(id,patch)=>{ let arr=read(K.c)||[]; arr=arr.map(x=>x.id===id?{...x,...patch,updatedAt:Date.now()}:x); write(K.c,arr); bus.emit("cats",arr); return arr.find(x=>x.id===id); },
     delCat:(id)=>{ const c=(read(K.c)||[]).filter(x=>x.id!==id); write(K.c,c); bus.emit("cats",c); },
     watchCats:(cb)=>bus.on("cats",cb),
     getOrders:()=>read(K.o)||[],
@@ -926,9 +1049,10 @@ const Fb = (()=>{
       if(!d.exists){ await settingsRef().set({...DEFAULT_SETTINGS,createdAt:Date.now(),updatedAt:Date.now()}); }
       else { const s=d.data(); if(s.adminUser===OLD_U || !s.adminUser || s.adminPass===OLD_P || !s.adminPass){ await settingsRef().update({adminUser:DEFAULT_SETTINGS.adminUser,adminPass:DEFAULT_SETTINGS.adminPass,updatedAt:Date.now()}); } } },
     getCats:async()=>{ const s=await catsRef().get(); return s.docs.map(d=>({id:d.id,...d.data()})); },
-    ensureCategories:async()=>{ const s=await catsRef().get(); if(s.empty){ const b=db.batch(); DEFAULT_CATEGORIES.forEach(n=>{ b.set(catsRef().doc(),{name:n,createdAt:Date.now()}); }); await b.commit(); } },
+    ensureCategories:async()=>{ const s=await catsRef().get(); if(s.empty){ const b=db.batch(); DEFAULT_PRODUCTS.forEach(p=>{ b.set(catsRef().doc(),{...p,createdAt:Date.now()}); }); await b.commit(); } },
     watchCats:(cb)=> catsRef().onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()})))) ,
-    addCat:async(name)=>{ const r=await catsRef().add({name,createdAt:Date.now()}); return {id:r.id,name}; },
+    addCat:async(c)=>{ const r=await catsRef().add({...c,createdAt:Date.now()}); return {id:r.id,...c}; },
+    updateCat:async(id,patch)=>{ await catsRef().doc(id).update(patch); },
     delCat:async(id)=>{ await catsRef().doc(id).delete(); },
     getOrders:async()=>{ const s=await ordersRef().orderBy("createdAt","desc").get(); return s.docs.map(d=>({id:d.id,...d.data()})); },
     watchOrders:(cb)=> ordersRef().onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()})))) ,
@@ -982,6 +1106,7 @@ const Backend = (()=>{
     getCats:()=> isFb()? Fb.getCats() : Promise.resolve(Demo.getCats()),
     watchCats:(cb)=> isFb()? Fb.watchCats(cb) : Demo.watchCats(cb),
     addCat:(n)=> isFb()? Fb.addCat(n) : Promise.resolve(Demo.addCat(n)),
+    updateCat:(id,p)=> isFb()? Fb.updateCat(id,p) : Promise.resolve(Demo.updateCat(id,p)),
     delCat:(id)=> isFb()? Fb.delCat(id) : Promise.resolve(Demo.delCat(id)),
     getOrders:()=> isFb()? Fb.getOrders() : Promise.resolve(Demo.getOrders()),
     watchOrders:(cb)=> isFb()? Fb.watchOrders(cb) : Demo.watchOrders(cb),
@@ -1009,7 +1134,10 @@ const State = {
   currentUser: null,
   owner: null,
   selectedCat: null,
-  orderFiles: []
+  orderFiles: [],
+  currency: "USD",
+  _preCat: null,
+  _prodMedia: null
 };
 
 /* ============================================================================
@@ -1382,11 +1510,13 @@ async function openOrderModal(){
   if(!State.currentUser){ openModal("loginOverlay"); return; }
   const cats = State.cats.length? State.cats : await Backend.getCats();
   State.cats = cats;
+  const pre = State._preCat || null; State._preCat=null;
   const grid=$("#orderCats"); grid.innerHTML=""; State.selectedCat=null; $("#orderCatInput").value="";
   (cats.length?cats:DEFAULT_CATEGORIES.map(n=>({name:n}))).forEach(c=>{
     const b=el("div","cat-pick",`<i class="fa-solid fa-layer-group"></i>${esc(c.name)}`);
     b.addEventListener("click",()=>{ $$(".cat-pick",grid).forEach(x=>x.classList.remove("active")); b.classList.add("active"); State.selectedCat=c.name; $("#orderCatInput").value=c.name; });
     grid.appendChild(b);
+    if(pre && c.name===pre){ b.classList.add("active"); State.selectedCat=c.name; $("#orderCatInput").value=c.name; }
   });
   $("#orderForm").reset(); State.orderFiles=[]; $("#orderFileList").innerHTML="";
   openModal("orderOverlay");
@@ -1466,7 +1596,7 @@ function setOwnerView(view){
   else if(view==="o-profile") main.innerHTML=ownerProfile();
   else if(view==="o-orders") main.innerHTML=ownerOrders();
   else if(view==="o-users") main.innerHTML=ownerUsers();
-  else if(view==="o-cats") main.innerHTML=ownerCats();
+  else if(view==="o-cats") main.innerHTML=ownerProducts();
   else if(view==="o-creds") main.innerHTML=ownerCreds();
   wireOwnerView(view); main.scrollTop=0;
 }
@@ -1612,23 +1742,77 @@ function showUserDetail(id){
   $("#blockU").onclick=async()=>{ await Backend.updateUser(u.id,{status:u.status==="blocked"?"active":"blocked"}); closeModal($("#detailOverlay")); renderUsersTable(); };
   openModal("detailOverlay");
 }
-function ownerCats(){
-  const cats=State.cats.length?State.cats:DEFAULT_CATEGORIES.map(n=>({name:n}));
+function ownerProducts(){
+  const cats = State.cats.length?State.cats:[];
   return `
-  <div class="panel-top"><div><h1>Category Management</h1><div class="crumb">Services shown in the Place Order modal</div></div></div>
+  <div class="panel-top"><div><h1>Products & Pricing</h1><div class="crumb">${cats.length} service(s) · prices stored in USD</div></div>
+    <div style="margin-left:auto"><button class="btn" id="exportProds"><i class="fa-solid fa-file-export"></i> Export CSV</button></div></div>
   <div class="panel-card glass">
-    <form id="catForm" class="toolbar">
-      <input name="cat" placeholder="New category name..." style="flex:1" required>
-      <button class="btn" type="submit"><i class="fa-solid fa-plus"></i> Add</button>
+    <h2><i class="fa-solid fa-tag"></i> Add / Edit Service</h2>
+    <form id="prodForm">
+      <input type="hidden" id="prodId">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="field" style="flex:1;margin:0"><label>Service / Product Name</label><input name="name" placeholder="e.g. Video Editing" required></div>
+        <div class="field" style="flex:1;margin:0"><label>Price (USD)</label><input name="price" type="number" min="0" step="0.01" placeholder="50" required></div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label>Short Description (optional)</label><textarea name="desc" placeholder="What's included..."></textarea></div>
+      <div class="field" style="margin-bottom:10px"><label>Sample Media (image or video) — optional</label>
+        <div class="dropzone" id="prodDrop"><i class="fa-solid fa-cloud-arrow-up"></i><div style="margin-top:6px">Drag &amp; drop or click to upload (image / short video)</div><input type="file" id="prodMedia" accept="image/*,video/*" hidden></div>
+        <div class="filelist" id="prodMediaList"></div>
+      </div>
+      <label class="check"><input type="checkbox" name="useTemplate"> <span>Use custom template instead of uploading (auto visual per service)</span></label>
+      <div class="toolbar" style="margin-top:6px">
+        <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> <span id="prodSubmit">Add Service</span></button>
+        <button class="btn ghost" type="button" id="prodCancel" style="display:none">Cancel Edit</button>
+      </div>
     </form>
-    <div class="chip-row" id="catChips">${cats.map(c=>`<span class="chip">${esc(c.name)} <button data-delcat="${c.id||''}" data-name="${esc(c.name)}"><i class="fa-solid fa-xmark"></i></button></span>`).join("")}</div>
+  </div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-layer-group"></i> Services List</h2>
+    <div class="chip-row" id="prodChips">${cats.map(c=>prodChip(c)).join("")}</div>
+    ${cats.length?'<div class="empty" style="padding:6px 0 0">Click the pen to edit · × to delete</div>':''}
   </div>`;
 }
-function renderCats(){
-  const cats=State.cats.length?State.cats:DEFAULT_CATEGORIES.map(n=>({name:n}));
-  const wrap=$("#catChips"); if(!wrap) return;
-  wrap.innerHTML=cats.map(c=>`<span class="chip">${esc(c.name)} <button data-delcat="${c.id||''}" data-name="${esc(c.name)}"><i class="fa-solid fa-xmark"></i></button></span>`).join("");
-  $$("[data-delcat]").forEach(b=>b.addEventListener("click",async()=>{ if(b.dataset.delcat){ await Backend.delCat(b.dataset.delcat); } else { toast("Demo category can't be removed (seeded).","info"); } renderCats(); }));
+function prodChip(c){
+  const price = (c.price!=null)? formatPrice(c.price,"USD") : "—";
+  return `<span class="chip">${esc(c.name)} <b>${price}</b>
+    <button data-edit="${c.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
+    <button data-delcat="${c.id||''}" data-name="${esc(c.name)}" title="Delete"><i class="fa-solid fa-xmark"></i></button></span>`;
+}
+function renderProducts(){
+  const wrap=$("#prodChips"); if(!wrap) return;
+  const cats=State.cats.length?State.cats:[];
+  wrap.innerHTML=cats.map(c=>prodChip(c)).join("");
+  $$("[data-edit]",wrap).forEach(b=>b.addEventListener("click",()=>editProduct(b.dataset.edit)));
+  $$("[data-delcat]",wrap).forEach(b=>b.addEventListener("click",async()=>{ if(b.dataset.delcat){ await Backend.delCat(b.dataset.delcat); } else { toast("Seeded item can't be removed here.","info"); } renderProducts(); }));
+}
+function editProduct(id){
+  const c=State.cats.find(x=>x.id===id); if(!c) return;
+  $("#prodId").value=id; const f=$("#prodForm");
+  f.name.value=c.name||""; f.price.value=(c.price!=null)?c.price:""; f.desc.value=c.desc||""; f.useTemplate.checked=!!c.useTemplate;
+  State._prodMedia = c.media? {dataUrl:c.media,type:c.mediaType}:null;
+  $("#prodMediaList").innerHTML = c.media? `<div><i class="fa-solid fa-paperclip"></i> ${c.mediaType==="video"?"video":"image"} attached</div>`:"";
+  $("#prodSubmit").textContent="Update Service"; $("#prodCancel").style.display="";
+  toast("Editing: "+c.name,"info");
+}
+function resetProdForm(){ const f=$("#prodForm"); if(f) f.reset(); const pid=$("#prodId"); if(pid) pid.value=""; State._prodMedia=null; const ml=$("#prodMediaList"); if(ml) ml.innerHTML=""; const ps=$("#prodSubmit"); if(ps) ps.textContent="Add Service"; const pc=$("#prodCancel"); if(pc) pc.style.display="none"; }
+function wireProdForm(){
+  const drop=$("#prodDrop"), inp=$("#prodMedia");
+  drop?.addEventListener("click",()=>inp.click());
+  inp?.addEventListener("change",()=>{ const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ State._prodMedia={dataUrl:r.result,type:f.type.startsWith("video")?"video":"image"}; $("#prodMediaList").innerHTML=`<div><i class="fa-solid fa-paperclip"></i> ${esc(f.name)} (${State._prodMedia.type})</div>`; }; r.readAsDataURL(f); });
+  $("#prodCancel")?.addEventListener("click",resetProdForm);
+  $("#prodForm")?.addEventListener("submit",async e=>{
+    e.preventDefault(); const f=e.target; const name=f.name.value.trim(); const price=parseFloat(f.price.value);
+    if(!name||isNaN(price)){ toast("Name and a valid USD price are required.","err"); return; }
+    const useTemplate=f.useTemplate.checked;
+    const media=useTemplate?null:(State._prodMedia?State._prodMedia.dataUrl:null);
+    const mediaType=useTemplate?null:(State._prodMedia?State._prodMedia.type:null);
+    const patch={name,price,desc:f.desc.value.trim(),useTemplate,media,mediaType,kw:detectKw(name)};
+    const id=$("#prodId").value;
+    if(id){ await Backend.updateCat(id,patch); toast("Service updated.","ok"); }
+    else { await Backend.addCat(patch); toast("Service added.","ok"); }
+    resetProdForm(); renderProducts();
+  });
 }
 function ownerCreds(){
   const o=State._owner||{user:State.settings.adminUser};
@@ -1661,7 +1845,9 @@ function wireOwnerView(view){
   if(view==="o-users"){ renderUsersTable(); $("#uSearch")?.addEventListener("input",renderUsersTable); $("#uStatus")?.addEventListener("change",renderUsersTable);
     $("#exportUsers")?.addEventListener("click",()=>exportCSV(State.users.map(u=>({name:u.name,username:u.username,email:u.email,phone:u.phone,status:u.status,joined:fmtDate(u.createdAt)})),"users.csv"));
   }
-  if(view==="o-cats"){ renderCats(); $("#catForm").addEventListener("submit",async e=>{ e.preventDefault(); const n=e.target.cat.value.trim(); if(!n) return; await Backend.addCat(n); e.target.reset(); toast("Category added.","ok"); }); }
+  if(view==="o-cats"){ renderProducts(); wireProdForm();
+    $("#exportProds")?.addEventListener("click",()=>exportCSV(State.cats.map(c=>({name:c.name,price_usd:c.price||"",desc:c.desc||"",media:c.mediaType||"none",use_template:c.useTemplate?"yes":"no"})),"products.csv"));
+  }
   if(view==="o-creds"){ $("#credForm").addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target);
     if(fd.get("nw")!==fd.get("cf")){ toast("Passwords don't match.","err"); return; }
     const ok=await Backend.ownerLogin(fd.get("user"),fd.get("cur"));
@@ -1771,6 +1957,12 @@ function initTheme(){
 }
 function toggleTheme(){ const cur=document.documentElement.getAttribute("data-theme"); const next=cur==="dark"?"light":"dark"; document.documentElement.setAttribute("data-theme",next); localStorage.setItem("sarib_theme",next); updateThemeIcon(); }
 function updateThemeIcon(){ const t=document.documentElement.getAttribute("data-theme"); $("#themeBtn").innerHTML = t==="dark"?'<i class="fa-solid fa-moon"></i>':'<i class="fa-solid fa-sun"></i>'; }
+function initCurrency(){
+  State.currency = localStorage.getItem("sarib_currency") || "USD";
+  const sel=$("#currencySel"); if(!sel) return;
+  sel.value=State.currency;
+  sel.addEventListener("change",()=>{ State.currency=sel.value; localStorage.setItem("sarib_currency",State.currency); renderServices(); });
+}
 
 /* ============================================================================
    BOOT
@@ -1811,11 +2003,11 @@ async function boot(){
   try{ State.users = await Backend.getUsers(); }catch(e){ State.users=[]; }
   try{ State._owner = await Backend.getOwner(); }catch(e){ State._owner={user:DEFAULT_SETTINGS.adminUser}; }
   applySettings(State.settings);
-  renderWork(); renderSkills();
+  initCurrency(); renderWork(); renderSkills(); renderServices();
 
   // firestore onSnapshot / demo bus listeners
   Backend.watchSettings(s=>{ State.settings=s; applySettings(s); rtPill("Site content updated"); });
-  Backend.watchCats(c=>{ State.cats=c; if($("#ownerPanel").classList.contains("open")) renderCats(); });
+  Backend.watchCats(c=>{ State.cats=c; if($("#ownerPanel").classList.contains("open")) renderProducts(); renderServices(); });
   Backend.watchOrders(o=>{ State.orders=o; if($("#ownerPanel").classList.contains("open")){ if($("#ordersBody")) renderOrdersTable(); } if($("#userPanel").classList.contains("open")){ const v=$("#userNav .active")?.dataset.view; if(v==="u-home"||v==="u-orders") setUserView(v); } });
   Backend.watchUsers(u=>{ State.users=u; if($("#ownerPanel").classList.contains("open")&&$("#usersBody")) renderUsersTable(); });
 
