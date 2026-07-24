@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link id="favicon" rel="icon" href="" />
 <style>
 /* ============================================================
    DESIGN SYSTEM / TOKENS
@@ -458,6 +459,18 @@ tbody tr:hover{background:var(--glass-1)}
 .currency-sel select{background:transparent;border:none;color:var(--txt);outline:none;font-weight:700;font-size:.85rem;cursor:pointer}
 .chip b{font-weight:800}
 .chip .fa-pen{color:var(--electric)}
+
+/* Owner profile pic (sidebar) + editable branding + social bar */
+.owner-profile-pic{width:84px;height:84px;border-radius:22px;margin:0 auto 6px;display:grid;place-items:center;overflow:hidden;background:var(--grad);color:#fff;font-weight:900;font-size:1.8rem;position:relative;cursor:pointer;box-shadow:0 8px 20px rgba(74,124,247,.4)}
+.owner-profile-pic img{width:100%;height:100%;object-fit:cover}
+.owner-profile-pic .cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;opacity:0;transition:.2s;font-size:1.4rem;color:#fff}
+.owner-profile-pic:hover .cam{opacity:1}
+.side-brand{justify-content:center;margin-bottom:18px}
+.social-bar{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:26px}
+.social-bar a{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:1.5rem;background:var(--glass-1);border:1px solid var(--glass-border);transition:.25s;text-decoration:none;color:var(--txt)}
+.social-bar a:hover{transform:translateY(-6px) rotateX(12deg);background:var(--grad);color:#fff;box-shadow:0 12px 30px rgba(74,124,247,.45)}
+.social-row{display:flex;gap:10px;margin-bottom:10px;align-items:center}
+.social-row select,.social-row input{flex:1;padding:10px 14px;border-radius:12px;background:var(--glass-1);border:1px solid var(--glass-border);color:var(--txt);outline:none}
 </style>
 </head>
 <body>
@@ -469,7 +482,7 @@ tbody tr:hover{background:var(--glass-1)}
 <!-- ========================= NAVBAR ========================= -->
 <nav class="nav" id="nav">
   <div class="nav-inner wrap" style="padding-left:18px;padding-right:18px">
-    <a href="#home" class="brand"><span class="logo-3d">S</span> Sarib<span class="grad-text">.</span></a>
+    <a href="#home" class="brand"><span class="logo-3d" id="brandLogo">S</span> Sarib<span class="grad-text">.</span></a>
     <div class="nav-links" id="navLinks">
       <a href="#work">Work</a>
       <a href="#skills">Skills</a>
@@ -615,12 +628,7 @@ tbody tr:hover{background:var(--glass-1)}
         <h3 id="aboutName">M. Sarib Randhawa</h3>
         <div class="sub" id="aboutTitle">Creative Technologist</div>
         <p class="section-sub" id="aboutDesc">I blend art direction with engineering to ship premium digital products — from brand identity to deployed applications.</p>
-        <div class="socials">
-          <a href="#" title="GitHub"><i class="fa-brands fa-github"></i></a>
-          <a href="#" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-          <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-        </div>
+        <div class="socials" id="aboutSocials"><!-- rendered from owner settings --></div>
       </div>
       <div class="glass" style="padding:38px">
         <h3 class="section-title" style="font-size:1.6rem">By the <span class="grad-text">Numbers</span></h3>
@@ -659,6 +667,16 @@ tbody tr:hover{background:var(--glass-1)}
         <div class="glass-sm" style="padding:18px;font-size:.85rem;color:var(--muted)"><i class="fa-solid fa-clock"></i> Typical response time: <b style="color:var(--txt)">under 4 hours</b> during business days.</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ========================= SOCIAL PROFILES ========================= -->
+<section id="social">
+  <div class="wrap center reveal">
+    <span class="eyebrow">Connect</span>
+    <h2 class="section-title">Find Me <span class="grad-text">Online</span></h2>
+    <p class="section-sub">Follow and reach out across all my social profiles — links are managed by the owner in the Owner Panel.</p>
+    <div class="social-bar" id="socialBar"><!-- rendered by JS --></div>
   </div>
 </section>
 
@@ -793,7 +811,8 @@ tbody tr:hover{background:var(--glass-1)}
 <div class="panel" id="ownerPanel">
   <div class="panel-shell">
     <aside class="sidebar">
-      <div class="side-brand"><span class="logo-3d">S</span> Owner Console</div>
+      <div class="owner-profile-pic" id="ownerAvatar" title="Owner profile — edit in Site Settings">S</div>
+      <div class="side-brand"><span class="logo-3d" id="ownerBrandLogo">S</span> Owner Console</div>
       <nav class="side-nav" id="ownerNav">
         <button class="active" data-view="o-home"><i class="fa-solid fa-gauge"></i> Dashboard</button>
         <button data-view="o-profile"><i class="fa-solid fa-sliders"></i> Site Settings</button>
@@ -845,7 +864,14 @@ const DEFAULT_SETTINGS = {
   email: "saribshareefbacha@gmail.com",
   location: "Pakistan · Remote & Contract",
   adminUser: "sarib",
-  adminPass: "sarib123"
+  adminPass: "sarib123",
+  avatar: "",            // owner profile image (dataURL or URL) — shown in Owner Panel
+  logo: "",              // site logo / favicon (dataURL or URL) — navbar + browser tab
+  socials: [             // owner-provided social profiles (only those with a url are shown)
+    {key:"github",url:""},{key:"linkedin",url:""},{key:"youtube",url:""},
+    {key:"instagram",url:""},{key:"tiktok",url:""},{key:"twitter",url:""},
+    {key:"facebook",url:""},{key:"whatsapp",url:""}
+  ]
 };
 const OWNER_GOOGLE_EMAIL = "saribshareefbacha@gmail.com";
 const DEFAULT_CATEGORIES = [
@@ -881,6 +907,21 @@ const PROJECTS = [
   {t:"Cinematic Reel 2025",cat:"Video",img:"linear-gradient(135deg,#f59e0b,#ef4444)",stack:["Premiere","DaVinci"],demo:"#",case:"#"},
   {t:"AI Voice Assistant",cat:"AI",img:"linear-gradient(135deg,#7c5cfc,#22d3ee)",stack:["Python","Whisper"],demo:"#",case:"#"}
 ];
+
+/* Available social platforms (key -> label + Font Awesome icon class) for owner-managed links */
+const SOCIALS = {
+  github:  {label:"GitHub",   icon:"fa-brands fa-github"},
+  linkedin:{label:"LinkedIn", icon:"fa-brands fa-linkedin-in"},
+  youtube: {label:"YouTube",  icon:"fa-brands fa-youtube"},
+  instagram:{label:"Instagram",icon:"fa-brands fa-instagram"},
+  tiktok:  {label:"TikTok",   icon:"fa-brands fa-tiktok"},
+  twitter: {label:"X / Twitter",icon:"fa-brands fa-x-twitter"},
+  facebook:{label:"Facebook", icon:"fa-brands fa-facebook-f"},
+  whatsapp:{label:"WhatsApp", icon:"fa-brands fa-whatsapp"},
+  behance: {label:"Behance",  icon:"fa-brands fa-behance"},
+  dribbble:{label:"Dribbble", icon:"fa-brands fa-dribbble"},
+  email:   {label:"Email",    icon:"fa-solid fa-envelope"}
+};
 
 /* Owner-defined products (seeded into Firestore categories collection) — prices in USD */
 const DEFAULT_PRODUCTS = [
@@ -1145,6 +1186,11 @@ const State = {
    ========================================================================== */
 function applySettings(s){
   State.settings = s;
+  // owner branding: navbar logo, sidebar logo, owner avatar, and browser favicon
+  setLogoEl($("#brandLogo"), s.logo||s.avatar);
+  setLogoEl($("#ownerBrandLogo"), s.logo||s.avatar);
+  setLogoEl($("#ownerAvatar"), s.avatar||s.logo);
+  const fav = s.logo||s.avatar; const fEl=$("#favicon"); if(fEl && fav) fEl.href = fav;
   $("#heroName").textContent = s.name;
   $("#heroDesc").textContent = s.desc;
   $("#aboutName").textContent = s.name;
@@ -1158,6 +1204,19 @@ function applySettings(s){
   $("#contactWa").href = wa;
   $("#contactMail").href = mailLink(s.email,"Project Inquiry","Hi "+s.name+",");
   document.title = s.name + " — " + (s.cast||"Creative Technologist");
+  renderSocials();
+}
+
+function setLogoEl(el, img){
+  if(!el) return;
+  if(img){ el.innerHTML = '<img src="'+img+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">'; }
+  else { el.textContent = "S"; }
+}
+function renderSocials(){
+  const list=(State.settings.socials||[]).filter(x=>x&&x.url&&String(x.url).trim());
+  const html = list.length? list.map(s=>{ const d=SOCIALS[s.key]||{label:s.key||"Link",icon:"fa-solid fa-link"}; return '<a href="'+esc(s.url)+'" target="_blank" rel="noopener" title="'+esc(d.label)+'" aria-label="'+esc(d.label)+'"><i class="'+d.icon+'"></i></a>'; }).join("") : '';
+  const bar=$("#socialBar"); if(bar){ bar.innerHTML = list.length? html : '<p style="color:var(--muted);font-size:.9rem">No social links added yet — manage them in the Owner Panel.</p>'; }
+  const about=$("#aboutSocials"); if(about){ about.innerHTML = html; }
 }
 
 function renderWork(){
@@ -1631,6 +1690,21 @@ function ownerProfile(){
   return `
   <div class="panel-top"><div><h1>Site Settings</h1><div class="crumb">Edits reflect on the public site instantly</div></div></div>
   <div class="panel-card glass">
+    <h2><i class="fa-solid fa-image"></i> Branding & Images</h2>
+    <div class="toolbar" style="align-items:flex-start;margin-bottom:18px">
+      <div style="text-align:center;flex:1">
+        <label class="avatar-edit" id="avOwner" title="Upload owner photo" style="margin:0 auto 8px;cursor:pointer">${s.avatar?`<img src="${s.avatar}" style="width:100%;height:100%;object-fit:cover">`:"S"}<span class="cam"><i class="fa-solid fa-camera"></i></span></label>
+        <input type="file" id="avOwnerInput" accept="image/*" hidden>
+        <div style="font-weight:700">Owner Profile Image</div>
+        <div style="color:var(--muted);font-size:.78rem">Shown in the Owner Panel</div>
+      </div>
+      <div style="text-align:center;flex:1">
+        <label class="avatar-edit" id="logoOwner" title="Upload logo / favicon" style="margin:0 auto 8px;cursor:pointer">${s.logo?`<img src="${s.logo}" style="width:100%;height:100%;object-fit:cover">`:"S"}<span class="cam"><i class="fa-solid fa-camera"></i></span></label>
+        <input type="file" id="logoOwnerInput" accept="image/*" hidden>
+        <div style="font-weight:700">Site Logo / Favicon</div>
+        <div style="color:var(--muted);font-size:.78rem">Browser tab + navbar</div>
+      </div>
+    </div>
     <form id="siteForm">
       <div class="toolbar" style="margin-bottom:14px">
         <div class="field" style="flex:1;margin:0"><label>Full Name</label><input name="name" value="${esc(s.name)}"></div>
@@ -1651,7 +1725,53 @@ function ownerProfile(){
         <button class="btn ghost" type="button" id="previewSite"><i class="fa-solid fa-eye"></i> Live Preview</button>
       </div>
     </form>
+  </div>
+  <div class="panel-card glass">
+    <h2><i class="fa-solid fa-share-nodes"></i> Social Profiles</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px">Links appear at the bottom of the landing page with their logos. Change a platform or paste a URL, then save. Only links with a URL are shown publicly.</p>
+    <div id="socialEditor"></div>
+    <button class="btn ghost" type="button" id="addSocial"><i class="fa-solid fa-plus"></i> Add Social Link</button>
+    <button class="btn" type="button" id="saveSocials" style="margin-left:10px"><i class="fa-solid fa-floppy-disk"></i> Save Social Links</button>
   </div>`;
+}
+function wireImageUpload(labelEl, inputEl, key){
+  if(!labelEl||!inputEl) return;
+  labelEl.addEventListener("click",()=>inputEl.click());
+  inputEl.addEventListener("change",()=>{
+    const f=inputEl.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{
+      const dataUrl=r.result;
+      State.settings[key]=dataUrl;
+      Backend.updateSettings({[key]:dataUrl}).catch(()=>{});
+      applySettings(State.settings);
+      const img=labelEl.querySelector("img");
+      if(img) img.src=dataUrl;
+      else labelEl.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover"><span class="cam"><i class="fa-solid fa-camera"></i></span>`;
+      toast((key==="avatar"?"Profile":"Logo")+" image updated.","ok");
+    };
+    r.readAsDataURL(f);
+  });
+}
+function renderSocialEditor(){
+  const wrap=$("#socialEditor"); if(!wrap) return;
+  const socials=(State.settings.socials||[]);
+  if(!socials.length){ wrap.innerHTML='<div class="empty" style="padding:14px 0">No links yet — click "Add Social Link".</div>'; return; }
+  wrap.innerHTML=socials.map((s,i)=>socialRowHtml(s,i)).join("");
+  bindSocialRows(wrap);
+}
+function socialRowHtml(s,i){
+  const opts=Object.keys(SOCIALS).map(k=>`<option value="${k}" ${s.key===k?"selected":""}>${SOCIALS[k].label}</option>`).join("");
+  return `<div class="social-row" data-i="${i}">
+    <select class="social-key" style="min-width:160px;flex:none">${opts}</select>
+    <input class="social-url" placeholder="https://..." value="${esc(s.url||'')}">
+    <button type="button" class="btn-sm danger social-del" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+  </div>`;
+}
+function bindSocialRows(wrap){
+  $$(".social-key",wrap).forEach(sel=>sel.addEventListener("change",()=>{ const i=+sel.closest(".social-row").dataset.i; State.settings.socials[i].key=sel.value; }));
+  $$(".social-url",wrap).forEach(inp=>inp.addEventListener("input",()=>{ const i=+inp.closest(".social-row").dataset.i; State.settings.socials[i].url=inp.value; }));
+  $$(".social-del",wrap).forEach(b=>b.addEventListener("click",()=>{ const i=+b.closest(".social-row").dataset.i; State.settings.socials.splice(i,1); renderSocialEditor(); }));
 }
 function ownerOrders(){
   return `
@@ -1834,6 +1954,20 @@ function wireOwnerView(view){
   $("#oMenu")?.addEventListener("click",()=>$(".sidebar").classList.toggle("open"));
   if(view==="o-home"){ $("#oMenu")?.addEventListener("click",()=>{}); }
   if(view==="o-profile"){
+    // editable owner profile image + site logo/favicon
+    wireImageUpload($("#avOwner"), $("#avOwnerInput"), "avatar");
+    wireImageUpload($("#logoOwner"), $("#logoOwnerInput"), "logo");
+    // social profile links editor
+    renderSocialEditor();
+    $("#addSocial")?.addEventListener("click",()=>{ const socials=State.settings.socials||[]; socials.push({key:"github",url:""}); State.settings.socials=socials; renderSocialEditor(); });
+    $("#saveSocials")?.addEventListener("click",async()=>{
+      const rows=$$("#socialEditor .social-row");
+      const socials=rows.map(r=>({key:r.querySelector(".social-key").value, url:r.querySelector(".social-url").value.trim()}));
+      State.settings.socials=socials;
+      await Backend.updateSettings({socials});
+      applySettings(State.settings); renderSocials();
+      toast("Social links saved.","ok");
+    });
     $("#siteForm").addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(e.target); const patch=Object.fromEntries(fd);
       await Backend.updateSettings(patch); applySettings({...State.settings,...patch}); toast("Site updated — live on public page!","ok"); });
     $("#previewSite").addEventListener("click",startOwnerPreview);
@@ -1944,6 +2078,7 @@ function initNav(){
   $("#userLogout").onclick=async()=>{ await Backend.logout(); onUserLogout(); };
   $("#ownerLogout").onclick=()=>{ State.owner=null; State.currentUser=null; $("#ownerPanel").classList.remove("open"); document.body.style.overflow=""; $("#getStartedBtn").classList.remove("hidden"); toast("Owner logged out.","info"); };
   $("#ownerPreview").onclick=startOwnerPreview;
+  $("#ownerAvatar")?.addEventListener("click",()=>{ if($("#ownerPanel").classList.contains("open")) setOwnerView("o-profile"); });
   $$("#userNav button").forEach(b=>b.onclick=()=>setUserView(b.dataset.view));
   $$("#ownerNav button").forEach(b=>b.onclick=()=>setOwnerView(b.dataset.view));
 }

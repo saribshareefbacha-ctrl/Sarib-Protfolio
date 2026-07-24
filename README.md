@@ -14,7 +14,7 @@ authentication and real‑time data sync.
 - **User Panel** — Overview, editable Profile (avatar/info/change password), My Orders table with
   live status, Place‑Order modal (category grid + auto ID + drag‑drop files), Hire‑Me form,
   Settings (delete account / logout).
-- **Owner Panel** — Dashboard stats, Site Settings (live edits to the public site), Order
+- **Owner Panel** — Dashboard stats, Site Settings (live edits to site text, **owner profile image**, **site logo / favicon**, and **social profile links**), Order
   Management (search/filter/status/update/delete/notify), User Management
   (block/unblock/delete/email/export CSV), **Products & Pricing** (owner-managed services with
   USD prices, optional image/video sample upload OR auto "use custom template" visual per
@@ -39,7 +39,7 @@ the `<script>`, paste your Firebase web config into `FIREBASE_CONFIG`, and set `
 Also create a **Firestore** database with these collections/documents:
 
 ```
-settings/owner        → { name, cast, exp, desc, phone, email, location, adminUser, adminPass, createdAt, updatedAt }
+settings/owner        → { name, cast, exp, desc, phone, email, location, adminUser, adminPass, avatar, logo, socials[], createdAt, updatedAt }
 users/{userId}        → { name, username, email, phone, status, avatar, createdAt, updatedAt }
 orders/{orderId}      → { orderId, customer, username, email, phone, category, description, attachments[], status, date, userId, createdAt, updatedAt }
 categories/{catId}    → { name, price, desc, kw, useTemplate, media, mediaType, createdAt }
@@ -97,7 +97,7 @@ Edit the `DEFAULT_SETTINGS`, `DEFAULT_PRODUCTS` (owner services + USD prices), `
 (exchange rates/symbols), `SKILLS`, and `PROJECTS` constants at the top of the script, or — once
 logged in as Owner — use **Site Settings** for live text edits and **Products & Pricing** to add
 / edit services (name, USD price, description, image/video sample upload, or "use custom
-template"), and **Owner Credentials** to change the owner username/password. The WhatsApp/email
+template"), **Site Settings** to upload the **owner profile image** and **site logo / favicon** (shown in the navbar + browser tab) and manage **social profile links** (rendered at the bottom of the landing page), and **Owner Credentials** to change the owner username/password. The WhatsApp/email
 buttons are generated automatically from the owner phone/email.
 
 The app is resilient: if Firestore reads are blocked by security rules it falls back to the
