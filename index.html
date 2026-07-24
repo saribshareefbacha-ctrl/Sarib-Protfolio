@@ -2153,17 +2153,19 @@ async function boot(){
         else { State.currentUser=me; onUserLoginSilent(); } }
     } else if(State.currentUser){ State.currentUser=null; onUserLogout(); }
   });
-  // load data
-  let settingsOk=true;
-  try{ State.settings = await Backend.getSettings(); }catch(e){ settingsOk=false; State.settings={...DEFAULT_SETTINGS}; console.warn("getSettings failed (check Firestore rules):",e); }
-  try{ if(mode==="firebase"){ await Backend.ensureSettings(); State.settings = await Backend.getSettings(); await Backend.ensureCategories(); } }catch(e){ console.warn("seed failed (needs write permission on settings/owner & categories):",e); }
-  try{ State.cats = await Backend.getCats(); }catch(e){ State.cats=DEFAULT_CATEGORIES.map(n=>({name:n})); }
-  try{ State.orders = await Backend.getOrders(); }catch(e){ State.orders=[]; }
-  try{ State.users = await Backend.getUsers(); }catch(e){ State.users=[]; }
-  try{ State._owner = await Backend.getOwner(); }catch(e){ State._owner={user:DEFAULT_SETTINGS.adminUser}; }
+  // ---- Paint the public site IMMEDIATELY (before any network wait) ----
+  // Products show from the owner's default list right away, then refresh the
+  // instant Firestore data resolves — the Services section is never blank or late.
+  // (Work/Skills use static data and don't need the network at all.)
   applySettings(State.settings);
-  initCurrency(); renderWork(); renderSkills(); renderServices();
+  initCurrency();
+  renderWork();
+  renderSkills();
+  renderServices();
   initCounters();
+
+  // Load the real data in parallel and refresh the UI as it arrives.
+  loadSiteData(mode);
 
   // firestore onSnapshot / demo bus listeners
   Backend.watchSettings(s=>{ State.settings=s; applySettings(s); rtPill("Site content updated"); });
@@ -2173,8 +2175,37 @@ async function boot(){
 
   // restore demo session
   if(mode==="demo"){ const sess=Demo.getSession(); if(sess){ State.currentUser=sess; onUserLoginSilent(); } }
-  if(mode==="firebase" && !settingsOk){ toast("Firebase reads blocked — set Firestore Rules (see README) or the Owner Panel won't load.","err"); }
   toast(mode==="firebase"?"Firebase backend active":"Running in demo mode — data stored locally", mode==="firebase"?"ok":"info");
+}
+/* Load real Firestore data WITHOUT blocking the first paint.
+   The product grid is already on screen (from defaults), so here we just
+   fetch in parallel and re-render the moment each piece of data lands. */
+async function loadSiteData(mode){
+  let settingsOk=true;
+  try{ State.settings = await Backend.getSettings(); }catch(e){ settingsOk=false; State.settings={...DEFAULT_SETTINGS}; console.warn("getSettings failed (check Firestore rules):",e); }
+  applySettings(State.settings);
+
+  // Seed default settings/categories in the background (needs write permission).
+  // Runs in parallel and never blocks the visible UI; the onSnapshot listeners
+  // will refresh the grid once the seeded data is written.
+  if(mode==="firebase"){
+    Promise.all([ Backend.ensureSettings().catch(()=>{}), Backend.ensureCategories().catch(()=>{}) ])
+      .then(async ()=>{ try{ State.settings = await Backend.getSettings(); applySettings(State.settings); }catch(e){} })
+      .catch(()=>{});
+  }
+
+  // Products/categories: refresh the Services grid with the real data now.
+  // (It was already painted from defaults, so there is never a blank moment.)
+  try{ State.cats = await Backend.getCats(); }catch(e){ State.cats=DEFAULT_CATEGORIES.map(n=>({name:n})); }
+  renderServices();
+
+  // Orders / users / owner are NOT needed for the public product display,
+  // so load them in the background and only re-render panel tables if open.
+  Backend.getOrders().then(o=>{ State.orders=o; if($("#ownerPanel").classList.contains("open") && $("#ordersBody")) renderOrdersTable(); }).catch(()=>{ State.orders=[]; });
+  Backend.getUsers().then(u=>{ State.users=u; }).catch(()=>{ State.users=[]; });
+  Backend.getOwner().then(o=>{ State._owner=o; }).catch(()=>{ State._owner={user:DEFAULT_SETTINGS.adminUser}; });
+
+  if(mode==="firebase" && !settingsOk){ toast("Firebase reads blocked — set Firestore Rules (see README) or the Owner Panel won't load.","err"); }
 }
 function onUserLoginSilent(){
   $("#getStartedBtn").classList.add("hidden"); $("#userChip").classList.remove("hidden"); $("#dashboardBtn").classList.remove("hidden");
